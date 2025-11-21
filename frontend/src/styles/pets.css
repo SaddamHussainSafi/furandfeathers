@@ -1,0 +1,141 @@
+.pets-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  padding: 2.75rem;
+}
+
+.pets-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.09), rgba(139, 92, 246, 0.08));
+  z-index: 0;
+}
+
+.pets-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.pets-hero__copy h1 {
+  margin-top: 0.35rem;
+  margin-bottom: 1rem;
+  font-size: clamp(2rem, 3vw, 2.85rem);
+}
+
+.pets-hero__copy p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.pets-hero__eyebrow {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: var(--color-primary-dark);
+}
+
+.pets-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1.25rem;
+}
+
+.pets-hero__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--color-text-muted);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.pets-hero__panel {
+  border-radius: 26px;
+  padding: 1.75rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(139, 92, 246, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.pets-hero__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.pets-hero__metric {
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--color-border);
+  display: grid;
+  gap: 0.25rem;
+}
+
+.pets-hero__metric strong {
+  font-size: 1.75rem;
+  color: var(--color-primary-dark);
+}
+
+.pets-hero__metric span {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.pets-hero__cta {
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.pets-hero__cta p {
+  margin: 0;
+}
+
+.pets-hero__cta-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pets-hero__cta .site-button {
+  justify-self: start;
+}
+
+.pets-filter-panel {
+  padding: 1.5rem 1.85rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 980px) {
+  .pets-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .pets-hero {
+    padding: 2rem;
+  }
+
+  .pets-hero__actions {
+    flex-direction: column;
+  }
+
+  .pets-hero__panel {
+    padding: 1.5rem;
+  }
+}

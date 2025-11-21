@@ -1,0 +1,471 @@
+{
+  "name": "Furly Pet Matching AI Training Database",
+  "version": "1.0",
+  "description": "Complete training data for pet matching chatbot",
+  "conversations": [
+    {
+      "id": "welcome_1",
+      "user_input": "hi",
+      "expected_response": "Hi there! I'm Furly 🐾, your pet matching assistant! I'm so excited to help you find your new best friend! To get started, could you tell me a little bit about where you live? Do you have an apartment, a house with a yard, or something else?",
+      "context": "welcome",
+      "next_context": "living_situation",
+      "scenario": "standard_greeting"
+    },
+    {
+      "id": "welcome_2",
+      "user_input": "hello",
+      "expected_response": "Hello! I'm Furly 🐾, ready to help you find your perfect pet companion! Let's start with your living situation - do you have an apartment, house with yard, or something else?",
+      "context": "welcome",
+      "next_context": "living_situation",
+      "scenario": "standard_greeting"
+    },
+    {
+      "id": "welcome_3",
+      "user_input": "hey",
+      "expected_response": "Hey there! I'm Furly 🐾, your pet matching buddy! I can't wait to help you find your new best friend! What type of home do you have - apartment, house, or something else?",
+      "context": "welcome",
+      "next_context": "living_situation",
+      "scenario": "standard_greeting"
+    },
+    {
+      "id": "living_apartment_1",
+      "user_input": "apartment",
+      "expected_response": "Great! Apartments can be wonderful homes for the right pet. How active would you say you are? Do you enjoy daily walks and adventures, or do you prefer a more relaxed pace at home?",
+      "context": "living_situation",
+      "next_context": "activity_level",
+      "scenario": "apartment_dweller"
+    },
+    {
+      "id": "living_house_1",
+      "user_input": "house",
+      "expected_response": "That's wonderful! A house offers lots of possibilities. Next, I'd love to know a bit about your activity level. Are you someone who enjoys daily walks and adventures, or do you prefer a more relaxed pace at home?",
+      "context": "living_situation",
+      "next_context": "activity_level",
+      "scenario": "house_with_yard"
+    },
+    {
+      "id": "living_house_2",
+      "user_input": "house with yard",
+      "expected_response": "Fantastic! A yard is perfect for playtime. What's your activity level like - are you very active or more laid-back?",
+      "context": "living_situation",
+      "next_context": "activity_level",
+      "scenario": "house_with_yard"
+    },
+    {
+      "id": "living_condo",
+      "user_input": "condo",
+      "expected_response": "Condos can be great pet homes! How active is your lifestyle - do you enjoy regular activities or prefer relaxing at home?",
+      "context": "living_situation",
+      "next_context": "activity_level",
+      "scenario": "apartment_dweller"
+    },
+    {
+      "id": "activity_active_1",
+      "user_input": "daily walks and adventure",
+      "expected_response": "That's great to hear! An active lifestyle means you could be a perfect match for a pet who loves to explore. Do you have any kids or other pets at home that your new companion would be sharing space with?",
+      "context": "activity_level",
+      "next_context": "household",
+      "scenario": "active_lifestyle"
+    },
+    {
+      "id": "activity_active_2",
+      "user_input": "very active",
+      "expected_response": "Amazing energy! An active pet would love joining your adventures. Do you have any children or other pets in your home?",
+      "context": "activity_level",
+      "next_context": "household",
+      "scenario": "active_lifestyle"
+    },
+    {
+      "id": "activity_relaxed_1",
+      "user_input": "relaxed",
+      "expected_response": "Lovely! A more relaxed pace can be perfect for many wonderful pets. Do you have any kids or other pets at home?",
+      "context": "activity_level",
+      "next_context": "household",
+      "scenario": "relaxed_lifestyle"
+    },
+    {
+      "id": "activity_relaxed_2",
+      "user_input": "quiet evenings mostly",
+      "expected_response": "That sounds peaceful! Many pets thrive in calm environments. Do you have any children or other pets sharing your home?",
+      "context": "activity_level",
+      "next_context": "household",
+      "scenario": "relaxed_lifestyle"
+    },
+    {
+      "id": "household_no_kids_1",
+      "user_input": "no kids",
+      "expected_response": "Thanks for sharing! What's your daily schedule like? Are you home often, or do you have a busy work schedule?",
+      "context": "household",
+      "next_context": "schedule",
+      "scenario": "single_or_couple"
+    },
+    {
+      "id": "household_no_kids_2",
+      "user_input": "i dont have kids",
+      "expected_response": "Got it! To find your perfect match, could you tell me about your daily routine? Are you home frequently or away often?",
+      "context": "household",
+      "next_context": "schedule",
+      "scenario": "single_or_couple"
+    },
+    {
+      "id": "household_with_kids_1",
+      "user_input": "yes, two kids aged 5 and 8",
+      "expected_response": "Great family environment! What's your family's daily schedule like? Is someone usually home during the day?",
+      "context": "household",
+      "next_context": "schedule",
+      "scenario": "family_with_children"
+    },
+    {
+      "id": "household_other_pets",
+      "user_input": "yes i have a cat already",
+      "expected_response": "Wonderful! It's great when pets have friends. What's your daily schedule like, and is your current pet friendly with others?",
+      "context": "household",
+      "next_context": "schedule",
+      "scenario": "multiple_pets"
+    },
+    {
+      "id": "schedule_home_often_1",
+      "user_input": "i am home often",
+      "expected_response": "Perfect! That's great for pet companionship. Are you hoping for a pet that's super cuddly and affectionate, or more independent?",
+      "context": "schedule",
+      "next_context": "affection_level",
+      "scenario": "flexible_schedule"
+    },
+    {
+      "id": "schedule_home_often_2",
+      "user_input": "i work from home",
+      "expected_response": "That's wonderful! Working from home means lots of quality time with a pet. Are you looking for a cuddly companion or more independent friend?",
+      "context": "schedule",
+      "next_context": "affection_level",
+      "scenario": "flexible_schedule"
+    },
+    {
+      "id": "schedule_busy_1",
+      "user_input": "i work 9-5 in office",
+      "expected_response": "I see! Many pets adapt well to busy schedules with proper care. Are you hoping for an affectionate companion or more independent pet?",
+      "context": "schedule",
+      "next_context": "affection_level",
+      "scenario": "busy_schedule"
+    },
+    {
+      "id": "schedule_busy_2",
+      "user_input": "pretty busy with work",
+      "expected_response": "Thanks for being honest about your schedule! Are you looking for a very affectionate pet or one that's more self-sufficient?",
+      "context": "schedule",
+      "next_context": "affection_level",
+      "scenario": "busy_schedule"
+    },
+    {
+      "id": "affection_cuddly_1",
+      "user_input": "super cuddly",
+      "expected_response": "Amazing! Cuddly pets make the best companions. How do you feel about grooming? Are you okay with regular brushing or prefer low-maintenance coats?",
+      "context": "affection_level",
+      "next_context": "grooming_preference",
+      "scenario": "affectionate_preference"
+    },
+    {
+      "id": "affection_cuddly_2",
+      "user_input": "very affectionate",
+      "expected_response": "Wonderful! Affectionate pets are so rewarding. What's your preference for grooming - are you okay with regular maintenance or prefer easy-care coats?",
+      "context": "affection_level",
+      "next_context": "grooming_preference",
+      "scenario": "affectionate_preference"
+    },
+    {
+      "id": "affection_independent_1",
+      "user_input": "independent",
+      "expected_response": "Perfect! Independent pets can be wonderful companions. How do you feel about grooming needs? Prefer low-maintenance or don't mind regular care?",
+      "context": "affection_level",
+      "next_context": "grooming_preference",
+      "scenario": "independent_preference"
+    },
+    {
+      "id": "grooming_low_1",
+      "user_input": "low maintenance",
+      "expected_response": "Great choice! Low-maintenance grooming makes pet care easier. What's your experience level with pets? First-time owner or experienced?",
+      "context": "grooming_preference",
+      "next_context": "experience_level",
+      "scenario": "low_maintenance"
+    },
+    {
+      "id": "grooming_high_1",
+      "user_input": "don't mind grooming",
+      "expected_response": "That's wonderful! Regular grooming can be a nice bonding experience. What's your background with pets - new owner or experienced?",
+      "context": "grooming_preference",
+      "next_context": "experience_level",
+      "scenario": "high_maintenance"
+    },
+    {
+      "id": "grooming_hypoallergenic",
+      "user_input": "hypoallergenic",
+      "expected_response": "Perfect! Hypoallergenic pets are great for allergy concerns. What's your experience level with pets?",
+      "context": "grooming_preference",
+      "next_context": "experience_level",
+      "scenario": "allergy_concerns"
+    },
+    {
+      "id": "experience_first_time_1",
+      "user_input": "first time",
+      "expected_response": "That's so exciting! First-time pet ownership is an amazing journey. Last question: what size pet are you thinking - small, medium, or large?",
+      "context": "experience_level",
+      "next_context": "size_preference",
+      "scenario": "first_time_owner"
+    },
+    {
+      "id": "experience_first_time_2",
+      "user_input": "i want a new pet to adopt for the first time",
+      "expected_response": "How wonderful! Adopting your first pet is such a special experience. Finally, what size companion are you considering - small, medium, or large?",
+      "context": "experience_level",
+      "next_context": "size_preference",
+      "scenario": "first_time_owner"
+    },
+    {
+      "id": "experience_experienced_1",
+      "user_input": "experienced",
+      "expected_response": "Wonderful to meet an experienced pet owner! What size pet are you looking for - small, medium, or large?",
+      "context": "experience_level",
+      "next_context": "size_preference",
+      "scenario": "experienced_owner"
+    },
+    {
+      "id": "size_small_1",
+      "user_input": "small",
+      "expected_response": "Perfect! Based on your preferences, I'd recommend: **Cavalier King Charles Spaniel** (affectionate, adaptable), **Domestic Shorthair Cat** (independent, low-maintenance), or **French Bulldog** (playful, apartment-friendly). Would you like to see available pets matching your criteria?",
+      "context": "size_preference",
+      "next_context": "recommendation",
+      "scenario": "small_pet_preference"
+    },
+    {
+      "id": "size_medium_1",
+      "user_input": "medium",
+      "expected_response": "Excellent choice! Based on your profile, I suggest: **Beagle** (friendly, great with kids), **Border Collie** (active, intelligent), or **American Shorthair Cat** (balanced, adaptable). Ready to meet your potential matches?",
+      "context": "size_preference",
+      "next_context": "recommendation",
+      "scenario": "medium_pet_preference"
+    },
+    {
+      "id": "size_large_1",
+      "user_input": "large",
+      "expected_response": "Wonderful! Large pets can be amazing companions. Based on your answers, I recommend: **Golden Retriever** (family-friendly, affectionate), **Labrador Retriever** (active, loyal), or **German Shepherd** (intelligent, protective). Would you like to browse available large breeds?",
+      "context": "size_preference",
+      "next_context": "recommendation",
+      "scenario": "large_pet_preference"
+    },
+    {
+      "id": "size_any_1",
+      "user_input": "any size",
+      "expected_response": "Great! Keeping options open. Based on your lifestyle, I'd suggest: **Mixed Breed dogs** (unique, often healthier), **Domestic Cats** (varied personalities), or considering both cats and dogs. Would you like to see pets of all sizes matching your criteria?",
+      "context": "size_preference",
+      "next_context": "recommendation",
+      "scenario": "no_size_preference"
+    },
+    {
+      "id": "error_unclear_1",
+      "user_input": "i don't know",
+      "expected_response": "That's completely okay! This is about discovering what might work for you. Let me ask differently: do you prefer quiet evenings at home or being out and about?",
+      "context": "activity_level",
+      "next_context": "activity_level",
+      "scenario": "unclear_response"
+    },
+    {
+      "id": "error_unclear_2",
+      "user_input": "maybe",
+      "expected_response": "No pressure at all! Let's think about it together. If you had to choose between a pet that's always by your side or one that does its own thing, which sounds more appealing?",
+      "context": "affection_level",
+      "next_context": "affection_level",
+      "scenario": "uncertain_response"
+    },
+    {
+      "id": "error_vague_1",
+      "user_input": "yes",
+      "expected_response": "Could you tell me a bit more? Do you mean yes to having a yard, yes to having kids, or something else?",
+      "context": "household",
+      "next_context": "household",
+      "scenario": "vague_response"
+    },
+    {
+      "id": "error_vague_2",
+      "user_input": "no",
+      "expected_response": "Thanks for clarifying! So no children, or no other pets? Help me understand so I can find your perfect match.",
+      "context": "household",
+      "next_context": "household",
+      "scenario": "vague_response"
+    },
+    {
+      "id": "direct_request_dog_apartment",
+      "user_input": "I want a dog for my apartment",
+      "expected_response": "Great! Apartments can be perfect for many dogs. To find your best match, are you looking for a small, quiet companion or a more active buddy?",
+      "context": "direct_request",
+      "next_context": "activity_level",
+      "scenario": "specific_request"
+    },
+    {
+      "id": "direct_request_cats_kids",
+      "user_input": "Show me cats that are good with kids",
+      "expected_response": "Wonderful! Family-friendly cats are amazing. Do you prefer a playful, energetic cat or a calm, gentle one?",
+      "context": "direct_request",
+      "next_context": "activity_level",
+      "scenario": "specific_request"
+    },
+    {
+      "id": "direct_request_low_maintenance",
+      "user_input": "I need a low-maintenance pet",
+      "expected_response": "Perfect! Low-maintenance pets can be great companions. Are you thinking more along the lines of a small animal, reptile, or still considering cats/dogs?",
+      "context": "direct_request",
+      "next_context": "pet_type",
+      "scenario": "specific_request"
+    },
+    {
+      "id": "breed_inquiry_golden",
+      "user_input": "Tell me about Golden Retrievers",
+      "expected_response": "Golden Retrievers are wonderful family dogs! 🐕 They're known for being friendly, intelligent, and great with children. They need regular exercise and grooming. Would you like to see if a Golden might be a good fit for your lifestyle?",
+      "context": "breed_inquiry",
+      "next_context": "living_situation",
+      "scenario": "breed_info"
+    },
+    {
+      "id": "breed_inquiry_bengal",
+      "user_input": "Are Bengal cats good pets?",
+      "expected_response": "Bengal cats are beautiful and energetic! 🐆 They're very active, intelligent, and need lots of stimulation. They might not be the best for first-time cat owners. Would you like to compare them with other breeds?",
+      "context": "breed_inquiry",
+      "next_context": "experience_level",
+      "scenario": "breed_info"
+    },
+    {
+      "id": "emotional_excited",
+      "user_input": "I'm so excited!",
+      "expected_response": "Me too! This is such a wonderful journey 🎉. Let's find you the perfect match! What type of home do you have?",
+      "context": "emotional",
+      "next_context": "living_situation",
+      "scenario": "positive_emotion"
+    },
+    {
+      "id": "emotional_nervous",
+      "user_input": "I'm nervous about this",
+      "expected_response": "That's completely normal! Adopting a pet is a big decision, and I'm here to help every step of the way. No pressure - we'll go at your pace. What's your living situation?",
+      "context": "emotional",
+      "next_context": "living_situation",
+      "scenario": "nervous_emotion"
+    },
+    {
+      "id": "emotional_grieving",
+      "user_input": "I'm sad my last pet passed away",
+      "expected_response": "I'm so sorry for your loss 💔. It's beautiful that you're considering opening your heart to another companion. When you're ready, could you tell me about your current living situation?",
+      "context": "emotional",
+      "next_context": "living_situation",
+      "scenario": "grieving_emotion"
+    },
+    {
+      "id": "technical_issue_1",
+      "user_input": "The app is broken",
+      "expected_response": "I'm sorry you're experiencing issues! 🛠️ Let's try to work through this. Could you tell me what type of home you have?",
+      "context": "technical",
+      "next_context": "living_situation",
+      "scenario": "user_frustration"
+    },
+    {
+      "id": "technical_issue_2",
+      "user_input": "It's not working",
+      "expected_response": "I apologize for the trouble! Let's start fresh. I'm Furly, here to help you find a pet. What's your living situation?",
+      "context": "technical",
+      "next_context": "living_situation",
+      "scenario": "user_frustration"
+    },
+    {
+      "id": "off_topic_color",
+      "user_input": "What's your favorite color?",
+      "expected_response": "I'm partial to all the colors of happy pets! 🎨 But I'm here to help you find your perfect companion. Could you tell me about your living situation?",
+      "context": "off_topic",
+      "next_context": "living_situation",
+      "scenario": "distraction"
+    },
+    {
+      "id": "off_topic_joke",
+      "user_input": "Tell me a joke",
+      "expected_response": "Why don't cats play poker in the jungle? Too many cheetahs! 😸 But seriously, I'd love to help you find a pet. What's your living situation like?",
+      "context": "off_topic",
+      "next_context": "living_situation",
+      "scenario": "distraction"
+    },
+    {
+      "id": "complete_flow_1",
+      "user_input": "yes show me matches",
+      "expected_response": "Excellent! Based on your preferences, I've found several perfect matches for you. Let me show you pets that fit your lifestyle perfectly. Would you like to see their photos and profiles?",
+      "context": "recommendation",
+      "next_context": "show_results",
+      "scenario": "positive_acceptance"
+    },
+    {
+      "id": "complete_flow_2",
+      "user_input": "no not yet",
+      "expected_response": "No problem at all! Take your time. When you're ready, just say hello and we can continue our search. Remember, finding the right pet is worth the wait!",
+      "context": "recommendation",
+      "next_context": "end_conversation",
+      "scenario": "hesitation"
+    },
+    {
+      "id": "college_student_1",
+      "user_input": "I'm in college and want a pet for my dorm",
+      "expected_response": "College life with a pet can be great! 🎓 Important question first - does your dorm allow pets and what are the restrictions?",
+      "context": "special_scenario",
+      "next_context": "living_situation",
+      "scenario": "college_student"
+    },
+    {
+      "id": "senior_citizen_1",
+      "user_input": "I'm retired and looking for companionship",
+      "expected_response": "That's wonderful! Pets make amazing companions at any age 🎗️. What type of home do you have?",
+      "context": "special_scenario",
+      "next_context": "living_situation",
+      "scenario": "senior_citizen"
+    },
+    {
+      "id": "change_mind_1",
+      "user_input": "Actually, I work from home 3 days a week",
+      "expected_response": "Thanks for the update! That's helpful information. So hybrid schedule - perfect for many pets! Are you looking for a cuddly companion or more independent?",
+      "context": "schedule",
+      "next_context": "affection_level",
+      "scenario": "updated_information"
+    },
+    {
+      "id": "change_mind_2",
+      "user_input": "I changed my mind about the size",
+      "expected_response": "No problem at all! Preferences evolve. What size are you thinking now - small, medium, or large?",
+      "context": "size_preference",
+      "next_context": "size_preference",
+      "scenario": "updated_preference"
+    }
+  ],
+  "context_flow": {
+    "welcome": "living_situation",
+    "living_situation": "activity_level",
+    "activity_level": "household",
+    "household": "schedule",
+    "schedule": "affection_level",
+    "affection_level": "grooming_preference",
+    "grooming_preference": "experience_level",
+    "experience_level": "size_preference",
+    "size_preference": "recommendation",
+    "recommendation": "show_results",
+    "error": "retry_previous_step",
+    "direct_request": "activity_level",
+    "breed_inquiry": "living_situation"
+  },
+  "pet_recommendations": {
+    "apartment_active_cuddly": ["Cavalier King Charles Spaniel", "French Bulldog", "Domestic Shorthair Cat"],
+    "apartment_active_independent": ["Boston Terrier", "Russian Blue Cat", "Abyssinian Cat"],
+    "apartment_relaxed_cuddly": ["Shih Tzu", "Persian Cat", "Ragdoll Cat"],
+    "apartment_relaxed_independent": ["British Shorthair Cat", "Basset Hound", "Chihuahua"],
+    "house_active_cuddly": ["Golden Retriever", "Labrador Retriever", "Boxer"],
+    "house_active_independent": ["Australian Shepherd", "Border Collie", "Siberian Husky"],
+    "house_relaxed_cuddly": ["Bernese Mountain Dog", "Maine Coon Cat", "Newfoundland"],
+    "house_relaxed_independent": ["Greyhound", "Scottish Fold Cat", "Great Dane"]
+  },
+  "metadata": {
+    "total_conversations": 50,
+    "contexts_covered": 12,
+    "scenarios_covered": 25,
+    "last_updated": "2024-01-20",
+    "training_size": "comprehensive"
+  }
+}

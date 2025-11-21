@@ -1,0 +1,118 @@
+.cat-loader {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.cat-loader__halo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(147, 197, 253, 0.35), transparent 60%);
+  filter: blur(6px);
+  animation: catHalo 3s ease-in-out infinite;
+}
+
+.cat-loader__svg {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-loader__outline {
+  fill: none;
+  stroke: url(#catLoaderGradient);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 310;
+  stroke-dashoffset: 310;
+  animation: catOutline 2.4s ease-in-out infinite;
+}
+
+.cat-loader__face {
+  fill: rgba(248, 250, 255, 0.9);
+  stroke: rgba(148, 163, 184, 0.4);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 8px 18px rgba(15, 23, 42, 0.2));
+}
+
+.cat-loader__eye {
+  fill: #0f172a;
+  animation: catBlink 4s infinite;
+  transform-origin: center;
+}
+
+.cat-loader__eye--right {
+  animation-delay: 0.2s;
+}
+
+.cat-loader__nose {
+  fill: #f97316;
+}
+
+.cat-loader__whisker {
+  stroke: rgba(15, 23, 42, 0.5);
+  stroke-width: 2;
+  stroke-linecap: round;
+  animation: catWhisker 1.8s ease-in-out infinite;
+}
+
+.cat-loader__whisker--right {
+  animation-delay: 0.2s;
+}
+
+.cat-loader__label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.75);
+  text-align: center;
+}
+
+@keyframes catOutline {
+  0% {
+    stroke-dashoffset: 310;
+  }
+  60% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -310;
+  }
+}
+
+@keyframes catBlink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes catWhisker {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(1.15);
+  }
+}
+
+@keyframes catHalo {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}

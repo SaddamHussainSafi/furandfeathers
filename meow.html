@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    
+    <!-- iphone x notch dodging without using "safe area layout" which would mean we couldn't run on iOS < 9.
+         For more info, see https://ayogo.com/blog/ios11-viewport/  -->
+    <meta name="viewport" content="viewport-fit=cover, width=device-width">
+
+    <meta property="og:site_name" content="Meow Soundboard">
+    <meta property="og:title" content="Meow Soundboard">
+    <meta name="description" content="Your cats, dogs, and other pets will go wild over these cat sounds. Just tap the pictures to play.">
+    <meta property="og:description" content="Your cats, dogs, and other pets will go wild over these cat sounds. Just tap the pictures to play.">
+
+    <title>Meow Soundboard</title>
+    <style>
+
+      /* latin */
+      @font-face {
+        font-family: 'Love Ya Like A Sister';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Love Ya Like A Sister Regular'), local('LoveYaLikeASister-Regular'), url(./loveYaLikeASister.woff2) format('woff2'), url(./loveYaLikeASister.ttf) format('truetype');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+      }
+
+      html {
+        background-color: white;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      h1 {
+        font-family: 'Love Ya Like A Sister', cursive;
+      }
+
+      #audio {
+        display: none;
+      }
+
+      #soundboard {
+        background-color: black;
+        float: left;
+        /* avoid the notch */
+        margin: env(safe-area-inset-top)
+                 env(safe-area-inset-right)
+                 env(safe-area-inset-bottom)
+                 env(safe-area-inset-left);
+      }
+
+      #title {
+        font-family: 'Love Ya Like A Sister', cursive;
+      }
+
+      .center {
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      .display_tile {
+        border: 2px solid #f90;
+        border-radius: 20%;
+        float: left;
+        font: normal 13px/17px Arial,Helvetica,sans-serif;
+        overflow: hidden;
+        position: relative;
+        height: calc(100vw / 5 - 4px);
+        width: calc(100vw / 5 - 4px);
+      }
+
+      .container {
+        display: block;
+      }
+
+      .popup {
+        background: radial-gradient(ellipse 50% 50%, white 0, white 90%, #f90 91%, transparent 98%);
+        font-family: 'Love Ya Like A Sister', cursive;
+        padding: 30px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center;
+        z-index: 1;
+        animation-iteration-count: 1;
+        animation-duration: 0.8s;
+        animation-fill-mode: forwards;
+        animation-name: pop;
+      }
+
+      @keyframes pop {
+        from {
+          transform: translate(-50%, -50%) scale3d(0.01, 0.01, 0.01);
+        }
+        75% {
+          transform: translate(-50%, -50%) scale3d(1.6, 1.5, 1.5);
+        }
+        to {
+          transform: translate(-50%, -50%) scale3d(1.0, 1.0, 1.0);
+        }
+      }
+
+      .product_block {
+        background-color: white;
+        border: 2px solid #f90;
+        display: block;
+      }
+
+      a.product_block {
+        text-decoration: none;
+      }
+
+      a.product_block > div {
+        height: 100%;
+        width: 100%;
+      }
+
+      .product_block .call_to_action {
+        background: linear-gradient(to bottom,#f8e6b8 0,#f3d686 6%,#ebb62c 100%);
+        bottom: 0;
+        color: #333;
+        display: block;
+        min-height: 17px;
+        overflow: hidden;
+        padding: 2%;
+        position: absolute;
+        width: 100%;
+      }
+
+      .product_block .call_to_action img {
+        padding-left: 2%;
+        padding-right: 2%;
+        max-width: 10%;
+        vertical-align: middle;
+      }
+
+      .product_block .product_image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 45%;
+        width: 45%;
+      }
+
+      .product_block .product_image img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+      }
+
+      .product_block img.logo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 3%;
+        width: 70%;
+      }
+
+      .product_block .list_price {
+        color: #666;
+        float: left;
+        margin-left: 3%;
+        margin-right: 3%;
+        text-align: right;
+        text-decoration: line-through;
+        width: 44%;
+      }
+
+      .product_block .lowest_price {
+        color: #646464;
+        float: left;
+        font-weight: bold;
+        margin-left: 3%;
+        margin-right: 3%;
+        text-align: left;
+        width: 44%;
+      }
+
+      .product_block .name {
+        color: #0066c0;
+        margin-left: 3%;
+        margin-right: 3%;
+        height: calc(1em + 3px);
+        overflow: hidden;
+      }
+
+      #product_block_0, #product_block_1, #product_block_2, #product_block_3,
+      #product_block_4, #product_block_5, #product_block_6, #product_block_7,
+      #product_block_8, #product_block_9, #product_block_10, #product_block_11,
+      #product_block_12, #product_block_13, #product_block_14, #product_block_15,
+      #product_block_16, #product_block_17, #product_block_18, #product_block_19 {
+        display: none;
+      }
+
+      .play_button {
+        background-image: url('./images/play.svg');
+        background-size: 100%;
+        opacity: .7;
+        pointer-events: none;
+        position: absolute;
+        top: 43%;
+        left: 43%;
+        height: 14%;
+        width: 14%;
+      }
+
+      .sound_item img {
+        height: 100%;
+        width: 100%;
+      }
+
+      @media screen and (max-width : 512px) {
+        .product_block .call_to_action {
+          display: none;
+        }
+      }
+
+      @media screen and (max-width: 729px) {
+        .product_block .list_price {
+          display: none;
+        }
+
+        .product_block .lowest_price {
+          display: none;
+        }
+      }
+
+      /* Number of display_tiles we show depends on the aspect ratio of the
+        device. We have 24 audio tiles and 1 Quetz memorial tile. Any
+        additional tiles we need to get to a nice x*y multiple are blocks
+        containing ads. For example, if we are displaying a 7*4 grid of
+        tiles, we'll need 3 ads. If we're displaying an 8*4 grid, we'll
+        need 7 ads. These media queries do the magic to make that happen.
+      */
+
+      /*
+          375/812  = .4618 (iphone x)            4x8
+          375/667  = .5622 (iphone 6/6s/7/8)     4x7
+          414/736  = .5625 (iphone 8+)           4x7
+          320/568  = .5634 (iphone 5/5s/5c/se)   4x7
+        1024x1366  = .7496 (ipad pro 12.9")      6x5
+          768x1024 = .75 (ipad mini,air,pro9.7") 6x5
+      */
+
+      /* ------ portrait modes ------ */
+
+      /* display a 3x10 grid of display_tiles */
+      @media screen and (max-aspect-ratio: 317/1000) {
+        .display_tile {
+          height: calc(100vh / 10 - 4px);
+          width: calc(100vw / 3 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 10 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 3 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2, #product_block_3, #product_block_4 {
+          display: block;
+        }
+      }
+
+      /* display a 3x9 grid of display_tiles */
+      @media screen and (min-aspect-ratio:318/1000) and (max-aspect-ratio: 370/1000) {
+          .display_tile {
+            height: calc(100vh / 9 - 4px);
+            width: calc(100vw / 3 - 4px);
+            height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 9 - 4px);
+            width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 3 - 4px);
+          }
+
+          #product_block_0, #product_block_1 {
+            display: block;
+          }
+      }
+
+      /* display a 4x8 grid of display_tiles */
+      @media screen and (min-aspect-ratio: 371/1000) and (max-aspect-ratio: 520/1000) {
+        .display_tile {
+          height: calc(100vh / 8 - 4px);
+          width: calc(100vw / 4 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 8 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 4 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2, #product_block_3, #product_block_4, #product_block_5, #product_block_6 {
+          display: block;
+        }
+      }
+
+      /* display a 4x7 grid  of display_tiles */
+      @media screen and (min-aspect-ratio: 521/1000) and (max-aspect-ratio: 600/1000) {
+        .display_tile {
+          height: calc(100vh / 7 - 4px);
+          width: calc(100vw / 4 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 7 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 4 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2 {
+          display: block;
+        }
+      }
+
+      /* display a 5x6 grid  of display_tiles */
+      @media screen and (min-aspect-ratio: 601/1000) and (max-aspect-ratio: 1/1) {
+        .display_tile {
+          height: calc(100vh / 6 - 4px);
+          width: calc(100vw / 5 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 6 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 5 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2, #product_block_3, #product_block_4 {
+          display: block;
+        }
+      }
+
+      /* ------ landscape modes ------ */
+
+      /* display a 6x5 grid  of display_tiles */
+      @media screen and (min-aspect-ratio: 1001/1000) and (max-aspect-ratio: 1000/601) {
+        .display_tile {
+          height: calc(100vh / 5 - 4px);
+          width: calc(100vw / 6 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 5 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 6 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2, #product_block_3, #product_block_4 {
+          display: block;
+        }
+      }
+
+      /* display a 7x4 grid  of display_tiles */
+      @media screen and (min-aspect-ratio: 1000/600) and (max-aspect-ratio: 1000/521) {
+        .display_tile {
+          height: calc(100vh / 4 - 4px);
+          width: calc(100vw / 7 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 4 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 7 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2 {
+          display: block;
+        }
+      }
+
+      /* display a 8x4 grid of display_tiles */
+      @media screen and (min-aspect-ratio: 1000/520) and (max-aspect-ratio: 1000/371) {
+        .display_tile {
+          height: calc(100vh / 4 - 4px);
+          width: calc(100vw / 8 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 4 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 8 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2, #product_block_3, #product_block_4, #product_block_5, #product_block_6 {
+          display: block;
+        }
+      }
+
+      /* display a 9x3 grid of display_tiles */
+      @media screen and (min-aspect-ratio: 1000/370) and (max-aspect-ratio: 1000/318) {
+        .display_tile {
+          height: calc(100vh / 3 - 4px);
+          width: calc(100vw / 9 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 3 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 9 - 4px);
+        }
+
+        #product_block_0, #product_block_1 {
+          display: block;
+        }
+      }
+
+      /* display a 10x3 grid of display_tiles */
+      @media screen and (min-aspect-ratio: 1000/317) {
+        .display_tile {
+          height: calc(100vh / 3 - 4px);
+          width: calc(100vw / 10 - 4px);
+          height: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 3 - 4px);
+          width: calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) / 10 - 4px);
+        }
+
+        #product_block_0, #product_block_1, #product_block_2, #product_block_3, #product_block_4 {
+          display: block;
+        }
+      }
+    </style>
+
+    <!-- This is just product data in json format stuck into a js variable named productInfo -->
+    <script id="productData" src="https://www.meowsoundboard.com/products.js"></script>
+
+    <script>
+      function configureClickHandlers() {
+        var sound_items = document.querySelectorAll("#soundboard .sound_item");
+
+        // for...of doesn't work on iOS7
+        for (var i=0; i < sound_items.length; i++) {
+          sound_items[i].addEventListener("click",
+            function(event) {
+              document.querySelector("[src*='" + event.target.id + "']").play();
+            }
+          );
+        }
+      }
+
+      function addiOSStyles() {
+        var styles = document.createElement("link");
+        styles.setAttribute("rel", "stylesheet");
+        styles.setAttribute("type", "text/css");
+        styles.setAttribute("href", "./ios.css");
+        document.getElementsByTagName("head")[0].appendChild(styles);
+      }
+
+      function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+      }
+
+      function iOS() {
+        return(!!navigator.userAgent.match(/iPhone|iPod|iPad/));
+      }
+
+      function popupTitle() {
+        var title = document.getElementById("title");
+
+        function dismissPopup() {
+          title.style.display = "none";
+        }
+
+        function addDismisser(e)
+        {
+          document.addEventListener("click", dismissPopup, {once: true});
+
+          /* The event doesn't fire on iOS when the popup itself is clicked
+             if the event handler is only attached to document. Gotta attach
+             to the popup too. Lovely. */
+          title.addEventListener("click", dismissPopup, {once: true});
+        }
+
+        title.addEventListener("animationend", addDismisser, false);
+
+        title.className += " popup center";
+      }
+
+      function registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/service_worker.js')
+            .then(function(reg){
+              console.log("Service Worker Registered");
+            }).catch(function(err) {
+              console.log("Service Worker Registration Failed: ", err)
+            });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {configureClickHandlers(); insertProductBlocks(); popupTitle();});
+
+      if (iOS())
+      {
+          addiOSStyles();
+      }
+
+      registerServiceWorker();
+
+      function insertProductBlocks() {
+        var tiles = document.getElementsByClassName("display_tile");
+        var position = [2, 7, 13, 16, 18, 26, 29];
+
+        if (typeof productInfo !== 'undefined') /* make sure we were able to fetch json */
+        {
+          for (var i=0; i < productInfo.length; i++)
+          {
+            var insertionPoint = tiles[getRandomInt(tiles.length - 1)];
+
+            var productBlock = "<a id='product_block_" + i + "' class='display_tile product_block' href='" + productInfo[i]["url"] + "'>" +
+                                 "<div>" +
+                                   "<img class='logo' src='./images/azn_logo.png' + alt='logo'>" +
+                                   "<div class='name'>" + productInfo[i]["name"] + "</div>" +
+                                   "<div class='product_image'><img src='" + productInfo[i]["mediumImage"] + "' alt='product image'></div>" +
+                                   "<div class='list_price'>" + productInfo[i]["listPrice"] + "</div>" +
+                                   "<div class='lowest_price'>" + productInfo[i]["lowestNewPrice"] + "</div>" +
+                                   "<div class='call_to_action center'><span><img src='./images/azn_cart.gif' alt='cart'>Shop Now</span></div>" +
+                                 "</div>" +
+                               "</a>";
+            insertionPoint.insertAdjacentHTML("afterend", productBlock);
+          }
+        }
+      }
+    </script>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/images/Icon-App-57x57@1x.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/images/Icon-App-60x60@1x.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/Icon-App-72x72@1x.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/images/Icon-App-76x76@1x.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/Icon-App-57x57@2x.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/images/Icon-App-60x60@2x.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/Icon-App-72x72@2x.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/images/Icon-App-76x76@2x.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/Icon-App-60x60@3x.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/Icon-App-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/images/Icon-App-512x512.png">
+    <link rel="icon" type="image/png" sizes="57x57" href="/images/Icon-App-57x57@1x.png">
+    <link rel="icon" type="image/png" sizes="60x60" href="/images/Icon-App-60x60@1x.png">
+    <link rel="icon" type="image/png" sizes="72x72" href="/images/Icon-App-72x72@1x.png">
+    <link rel="icon" type="image/png" sizes="76x76" href="/images/Icon-App-76x76@1x.png">
+    <link rel="icon" type="image/png" sizes="114x114" href="/images/Icon-App-57x57@2x.png">
+    <link rel="icon" type="image/png" sizes="120x120" href="/images/Icon-App-60x60@2x.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/images/Icon-App-72x72@2x.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="/images/Icon-App-76x76@2x.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="/images/Icon-App-60x60@3x.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/Icon-App-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/Icon-App-512x512.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/images/Icon-App-72x72@2x.png">
+    <meta name="theme-color" content="#ffffff">
+
+  </head>
+
+  <body>
+    <div id="title">
+      <h1 class="heading center">Meow Soundboard</h1>
+      <div class="description"><p>Your friends and cats will love these cat sounds.</p><p>Tap away to make their day.</p></div>
+    </div>
+    <div class="container">
+
+      <div id="soundboard">
+        <div class="display_tile sound_item"><img id="110011__tuberatanka__cat-meow"                   src="./images/ixie_and_quetzal_ready_to_attack_2011_350.jpg" alt="cats ready to attack" /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="138044__daboy291__cat-meow-once"                 src="./images/kittens-205757_350.jpg"          alt="kittens"                     /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="231905__islabonita__cat-in-heat_2"               src="./images/quetzal_05122012_155717_350.jpg" alt="cat on pink ruffled tutu"    /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="231905__islabonita__cat-in-heat_4"               src="./images/quetzal_01162015_194841_350.jpg" alt="cats telling secrets"        /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="120160__oneirophile__cat-wants-food"             src="./images/quetzal_01282015_160238_350.jpg" alt="cat selfie"                  /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="338819__cabled-mess__old-cat-meowing_1"          src="./images/quetzal_09292012_001749_350.jpg" alt="cozy cat"                    /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="333916__thearxx08__cat-meowing"                  src="./images/quetzal_03192016_152356_350.jpg" alt="kitty wants salad"           /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="156643__yoyodaman234__catmeow1"                  src="./images/quetzal_03212012_235222_350.jpg" alt="kitty hiding under covers"   /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="231905__islabonita__cat-in-heat_1"               src="./images/quetzal_03272014_215953_350.jpg" alt="cats hugging"                /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="205650__myswat__funny-cat-always-grumpy-kitty_2" src="./images/findlay_12182015_191000_350.jpg" alt="cat posing as baby kangaroo" /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="196251__lolamadeus__kitten-meowing"              src="./images/kittens-555822_350.jpg"          alt="three kittens in grass"      /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="51809__kyles__kitten-meow-evil-really-cool_2"    src="./images/quetzal_01132012_105612_350.jpg" alt="come hither kitty"           /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="231905__islabonita__cat-in-heat_6"               src="./images/quetzal_08202014_160631_350.jpg" alt="priority mail cat"           /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="338819__cabled-mess__old-cat-meowing_2"          src="./images/quetzal_10192013_200242_350.jpg" alt="cat in pig costume"          /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="173117__dimares121287__cat"                      src="./images/quetzal_11302015_201113_350.jpg" alt="profile of sleepy kitty"     /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="231905__islabonita__cat-in-heat_3"               src="./images/quetzal_06012012_165136_350.jpg" alt="kitty closeup"               /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="51809__kyles__kitten-meow-evil-really-cool_1"    src="./images/quetzal_02042015_191204_350.jpg" alt="cat in sphinx pose"          /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="66518__freemaster2__meow9"                       src="./images/quetzal_12012013_201340_350.jpg" alt="cat wearing a jacket"        /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="264507__danloss__meow"                           src="./images/quetzal_12092012_125538_350.jpg" alt="cat looks out of window"     /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="231905__islabonita__cat-in-heat_5"               src="./images/quetzal_07312015_175814_350.jpg" alt="exhausted cat sprawled out"  /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="205650__myswat__funny-cat-always-grumpy-kitty_3" src="./images/gargoyle_cat_9000_350.jpg"       alt="gargoyle cat"                /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="205650__myswat__funny-cat-always-grumpy-kitty_1" src="./images/quetzal_sleepy_2016_350.jpg"     alt="sleepy sphinx cat"           /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="123145__erihamster__my-cat-cammi-meowing"        src="./images/quetzal_doing_yoga_2016_350.jpg" alt="cat lying on back"           /><div class="play_button"></div></div>
+        <div class="display_tile sound_item"><img id="49784__urmumsacow__angry-cat"                    src="./images/quetzal_06072012_173341_350.jpg" alt="cat posing for portrait"     /><div class="play_button"></div></div>
+        <a href="./quetzal_memorial.html"><img class="display_tile"                                    src="./images/bottle_cap_hair_tie_350.jpg"     alt="RIP Quetzal" /></a>
+      </div> <!-- soundboard -->
+
+    </div> <!-- container -->
+
+    <div id="audio">
+      <audio preload="auto" src="./audio/110011__tuberatanka__cat-meow.mp3"></audio>
+      <audio preload="auto" src="./audio/51809__kyles__kitten-meow-evil-really-cool_1.mp3"></audio>
+      <audio preload="auto" src="./audio/51809__kyles__kitten-meow-evil-really-cool_2.mp3"></audio>
+      <audio preload="auto" src="./audio/66518__freemaster2__meow9.mp3"></audio>
+      <audio preload="auto" src="./audio/49784__urmumsacow__angry-cat.mp3"></audio>
+      <audio preload="auto" src="./audio/120160__oneirophile__cat-wants-food.mp3"></audio>
+      <audio preload="auto" src="./audio/138044__daboy291__cat-meow-once.mp3"></audio>
+      <audio preload="auto" src="./audio/333916__thearxx08__cat-meowing.mp3"></audio>
+      <audio preload="auto" src="./audio/205650__myswat__funny-cat-always-grumpy-kitty_1.mp3"></audio>
+      <audio preload="auto" src="./audio/205650__myswat__funny-cat-always-grumpy-kitty_2.mp3"></audio>
+      <audio preload="auto" src="./audio/205650__myswat__funny-cat-always-grumpy-kitty_3.mp3"></audio>
+      <audio preload="auto" src="./audio/156643__yoyodaman234__catmeow1.mp3"></audio>
+      <audio preload="auto" src="./audio/231905__islabonita__cat-in-heat_1.mp3"></audio>
+      <audio preload="auto" src="./audio/231905__islabonita__cat-in-heat_2.mp3"></audio>
+      <audio preload="auto" src="./audio/231905__islabonita__cat-in-heat_3.mp3"></audio>
+      <audio preload="auto" src="./audio/231905__islabonita__cat-in-heat_4.mp3"></audio>
+      <audio preload="auto" src="./audio/231905__islabonita__cat-in-heat_5.mp3"></audio>
+      <audio preload="auto" src="./audio/231905__islabonita__cat-in-heat_6.mp3"></audio>
+      <audio preload="auto" src="./audio/338819__cabled-mess__old-cat-meowing_1.mp3"></audio>
+      <audio preload="auto" src="./audio/338819__cabled-mess__old-cat-meowing_2.mp3"></audio>
+      <audio preload="auto" src="./audio/173117__dimares121287__cat.mp3"></audio>
+      <audio preload="auto" src="./audio/264507__danloss__meow.mp3"></audio>
+      <audio preload="auto" src="./audio/123145__erihamster__my-cat-cammi-meowing.mp3"></audio>
+      <audio preload="auto" src="./audio/196251__lolamadeus__kitten-meowing.mp3"></audio>
+    </div> <!-- audio -->
+  </body>
+</html>
+

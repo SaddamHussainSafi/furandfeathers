@@ -1,0 +1,460 @@
+.furly-chat-experience {
+  max-width: min(1200px, 95vw);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 3rem;
+  position: relative;
+}
+
+.furly-chat-experience::before,
+.furly-chat-experience::after {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  filter: blur(120px);
+  border-radius: 50%;
+  opacity: 0.6;
+  z-index: -1;
+}
+
+.furly-chat-experience::before {
+  top: -40px;
+  left: -60px;
+  background: rgba(14, 165, 233, 0.35);
+}
+
+.furly-chat-experience::after {
+  bottom: 0;
+  right: -60px;
+  background: rgba(139, 92, 246, 0.3);
+}
+
+.furly-chat-hero {
+  border-radius: 32px;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(226, 241, 255, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 35px 80px -40px rgba(15, 23, 42, 0.5);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.furly-chat-hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: var(--color-text);
+}
+
+.furly-chat-pill {
+  align-self: flex-start;
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-dark);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+.furly-chat-hero h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  margin: 0;
+}
+
+.furly-chat-hero p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.furly-chat-hero__stats {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.furly-chat-hero__stats div {
+  padding: 0.75rem 1.1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  min-width: 120px;
+}
+
+.furly-chat-hero__stats strong {
+  display: block;
+  font-size: 1.35rem;
+  color: var(--color-primary-dark);
+}
+
+.furly-chat-hero__stats span {
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.furly-chat-prompts {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.furly-chat-prompt {
+  border: none;
+  text-align: left;
+  border-radius: 20px;
+  padding: 1rem 1.2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 35px -22px rgba(15, 23, 42, 0.5);
+  display: grid;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  font: inherit;
+  color: inherit;
+}
+
+.furly-chat-prompt strong {
+  font-size: 1rem;
+}
+
+.furly-chat-prompt span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.furly-chat-prompt:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 45px -28px rgba(14, 165, 233, 0.45);
+}
+
+.furly-chat__panel {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 38px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 40px 120px -45px rgba(15, 23, 42, 0.65);
+  display: grid;
+  grid-template-rows: auto minmax(380px, 1fr) auto;
+  overflow: hidden;
+}
+
+.furly-chat__window-header {
+  padding: 1.75rem clamp(1.5rem, 4vw, 2.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.furly-chat__window-title {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.furly-chat__window-dot {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: radial-gradient(circle at 35% 25%, rgba(14, 165, 233, 0.9), rgba(79, 70, 229, 0.85));
+  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.35);
+}
+
+.furly-chat__window-eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.furly-chat__window-title h3 {
+  margin: 0.2rem 0;
+  font-size: 1.5rem;
+}
+
+.furly-chat__window-title span {
+  font-size: 0.95rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.furly-chat__window-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.furly-chat__reset {
+  border: none;
+  border-radius: 16px;
+  background: rgba(14, 165, 233, 0.12);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.furly-chat__reset:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.furly-chat__reset:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(14, 165, 233, 0.35);
+}
+
+.furly-chat__viewer {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(15, 23, 42, 0.04);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.furly-chat__viewer-initial {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #fff;
+  font-weight: 700;
+}
+
+.furly-chat__viewer strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.furly-chat__viewer small {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.furly-chat__messages {
+  padding: 1.5rem clamp(1.5rem, 4vw, 2.75rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: rgba(247, 249, 255, 0.65);
+}
+
+.furly-chat__initializing,
+.furly-chat__empty-state {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  color: rgba(15, 23, 42, 0.6);
+  text-align: center;
+}
+
+.furly-chat__message {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.furly-chat__avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.furly-chat__bubble {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 26px;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 40px -25px rgba(15, 23, 42, 0.25);
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.furly-chat__message.is-user {
+  flex-direction: row-reverse;
+}
+
+.furly-chat__message.is-user .furly-chat__bubble {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+  color: #fff;
+}
+
+.furly-chat__bubble p {
+  margin: 0 0 0.75rem 0;
+}
+
+.furly-chat__time {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.furly-chat__message.is-user .furly-chat__time {
+  color: rgba(255, 255, 255, 0.85);
+  text-align: right;
+}
+
+.furly-chat__bubble--typing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.furly-chat__recommendations {
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.furly-chat__recommendations-label {
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.furly-chat__recommendation-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.furly-chat__recommendation-card {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(248, 250, 255, 0.9);
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+
+.furly-chat__recommendation-media {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.furly-chat__recommendation-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.furly-chat__recommendation-body strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.furly-chat__recommendation-body span {
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.furly-chat__recommendation-body p {
+  margin: 0.35rem 0;
+  color: rgba(15, 23, 42, 0.75);
+}
+
+.furly-chat__recommendation-button {
+  margin-top: 0.35rem;
+}
+
+.furly-chat__composer {
+  padding: 1.5rem clamp(1.5rem, 4vw, 2.75rem) 2rem;
+  display: flex;
+  gap: 1rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.furly-chat__composer textarea {
+  flex: 1;
+  border-radius: 24px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 1rem 1.2rem;
+  font: inherit;
+  resize: none;
+  min-height: 90px;
+  background: rgba(248, 250, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.furly-chat__send {
+  border: none;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #fff;
+  font-weight: 600;
+  min-width: 140px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.furly-chat__send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.furly-chat__send:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 45px -22px rgba(14, 165, 233, 0.6);
+}
+
+@media (max-width: 920px) {
+  .furly-chat__window-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .furly-chat__window-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .furly-chat__recommendation-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .furly-chat-prompt {
+    padding: 0.85rem 1rem;
+  }
+
+  .furly-chat__panel {
+    border-radius: 28px;
+  }
+
+  .furly-chat__composer {
+    flex-direction: column;
+  }
+
+  .furly-chat__send {
+    width: 100%;
+  }
+
+  .furly-chat__viewer {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
