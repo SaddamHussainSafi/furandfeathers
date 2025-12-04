@@ -1,39 +1,28 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../api';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 
 export default function ManagePets() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
   const [filter, setFilter] = useState('all');
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingPet, setEditingPet] = useState(null);
-  const [editForm, setEditForm] = useState({
-    name: '',
-    species: '',
-    breed: '',
-    age: '',
-    gender: '',
-    location: '',
-    description: '',
-    status: 'Available',
-    image: null,
-  });
 
   useEffect(() => {
     const fetchPets = async () => {
       try {
         // Check if user is admin or superadmin
         const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
-        
+
         // Use different endpoint based on role
         const endpoint = isAdmin ? '/pets' : '/pets/my-pets';
         const response = await api.get(endpoint);
         console.log('API Response:', response.data); // Debug log
-        
+
         let petsData;
         if (isAdmin) {
           // For admins, the response is already PetResponse objects
@@ -53,7 +42,7 @@ export default function ManagePets() {
             addedDate: pet.addedDate || new Date().toISOString().split('T')[0]
           }));
         }
-        
+
         setPets(petsData);
       } catch (error) {
         console.error('Error fetching pets:', error);
@@ -68,9 +57,9 @@ export default function ManagePets() {
     }
   }, [user]);
 
-  const filteredPets = filter === 'all' ? pets : 
+  const filteredPets = filter === 'all' ? pets :
     filter === 'pending_review' ? pets.filter(pet => pet.listingStatus === 'PENDING_REVIEW') :
-    pets.filter(pet => pet.status === filter);
+      pets.filter(pet => pet.status === filter);
 
   if (loading) {
     return <div style={{ padding: '20px', textAlign: 'center' }}>Loading pets...</div>;
@@ -111,22 +100,6 @@ export default function ManagePets() {
     }
   };
 
-  const handleEdit = (pet) => {
-    setEditingPet(pet);
-    setEditForm({
-      name: pet.name,
-      species: pet.species,
-      breed: pet.breed,
-      age: pet.age,
-      gender: pet.gender,
-      location: pet.location,
-      description: pet.description,
-      status: pet.status,
-      image: null,
-    });
-    setShowEditModal(true);
-  };
-
   const handleDelete = async (petId) => {
     if (window.confirm('Are you sure you want to delete this pet?')) {
       try {
@@ -155,12 +128,12 @@ export default function ManagePets() {
         alert(`Setting status to ${newStatus} requires backend implementation. Available: APPROVED, REJECTED`);
         return;
       }
-      
+
       // Refresh pets
       const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPERADMIN';
       const endpoint = isAdmin ? '/pets' : '/pets/my-pets';
       const response = await api.get(endpoint);
-      
+
       let petsData;
       if (isAdmin) {
         petsData = response.data.map(pet => ({
@@ -178,61 +151,12 @@ export default function ManagePets() {
           addedDate: pet.addedDate || new Date().toISOString().split('T')[0]
         }));
       }
-      
+
       setPets(petsData);
       alert(`Pet database status updated to ${newStatus} successfully!`);
     } catch (error) {
       console.error('Error updating database status:', error);
       alert('Failed to update pet database status');
-    }
-  };
-
-  const handleEditChange = (e) => {
-    const { name, value, files } = e.target;
-    setEditForm({ ...editForm, [name]: files ? files[0] : value });
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    Object.entries(editForm).forEach(([key, value]) => {
-      if (value !== null) formData.append(key, value);
-    });
-
-    try {
-      await api.put(`/pets/${editingPet.id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      // Refresh pets
-      const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPERADMIN';
-      const endpoint = isAdmin ? '/pets' : '/pets/my-pets';
-      const response = await api.get(endpoint);
-      
-      let petsData;
-      if (isAdmin) {
-        petsData = response.data.map(pet => ({
-          ...pet,
-          status: pet.status || 'available',
-          applications: pet.applications || 0,
-          addedDate: pet.addedDate || new Date().toISOString().split('T')[0],
-          listingStatus: pet.listingStatus || 'APPROVED'
-        }));
-      } else {
-        petsData = response.data.map(pet => ({
-          ...pet,
-          status: pet.status || 'available',
-          applications: pet.applications || 0,
-          addedDate: pet.addedDate || new Date().toISOString().split('T')[0]
-        }));
-      }
-      
-      setPets(petsData);
-      setShowEditModal(false);
-      setEditingPet(null);
-      alert('Pet updated successfully!');
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      alert('Failed to update pet');
     }
   };
 
@@ -254,13 +178,7 @@ export default function ManagePets() {
         </div>
         <Link
           to="/add-pet"
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px'
-          }}
+          className="site-button site-button--primary"
         >
           Add New Pet
         </Link>
@@ -356,7 +274,7 @@ export default function ManagePets() {
                 <td style={{ padding: '15px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <img
-                      src={pet.imageUrl}
+                      src={normalizeMediaUrl(pet.imageUrl)}
                       alt={pet.name}
                       style={{ width: '60px', height: '45px', objectFit: 'cover', borderRadius: '4px' }}
                     />
@@ -376,8 +294,8 @@ export default function ManagePets() {
                       color: 'white'
                     }}
                   >
-          
-          
+
+
                     <option value="available">Available</option>
                     <option value="pending">Pending</option>
                     <option value="adopted">Adopted</option>
@@ -409,25 +327,29 @@ export default function ManagePets() {
                 <td style={{ padding: '15px' }}>{pet.applications}</td>
                 <td style={{ padding: '15px' }}>{pet.addedDate}</td>
                 <td style={{ padding: '15px' }}>
-                  <div style={{ display: 'flex', gap: '5px' }}>
-                    <select
-                      onChange={(e) => {
-                        if (e.target.value === 'edit') handleEdit(pet);
-                        else if (e.target.value === 'delete') handleDelete(pet.id);
-                        e.target.value = ''; // Reset select
-                      }}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                      className="site-button site-button--secondary"
+                      style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(pet.id)}
                       style={{
-                        padding: '4px 8px',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
+                        padding: '6px 12px',
+                        backgroundColor: '#dc3545',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '999px',
                         cursor: 'pointer',
-                        fontSize: '12px'
+                        fontWeight: 600,
+                        fontSize: '0.85rem'
                       }}
                     >
-                      <option value="">Actions</option>
-                      <option value="edit">Edit</option>
-                      <option value="delete">Delete</option>
-                    </select>
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -521,165 +443,6 @@ export default function ManagePets() {
           <p style={{ margin: 0, color: '#666' }}>Total Applications</p>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '8px',
-            width: '500px',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h2>Edit Pet</h2>
-            <form onSubmit={handleUpdate} encType="multipart/form-data">
-              <div style={{ marginBottom: '10px' }}>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Pet Name"
-                  value={editForm.name}
-                  onChange={handleEditChange}
-                  required
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                />
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <input
-                  type="text"
-                  name="species"
-                  placeholder="Species"
-                  value={editForm.species}
-                  onChange={handleEditChange}
-                  required
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                />
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <input
-                  type="text"
-                  name="breed"
-                  placeholder="Breed"
-                  value={editForm.breed}
-                  onChange={handleEditChange}
-                  required
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                />
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <input
-                  type="text"
-                  name="age"
-                  placeholder="Age"
-                  value={editForm.age}
-                  onChange={handleEditChange}
-                  required
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                />
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <select
-                  name="gender"
-                  value={editForm.gender}
-                  onChange={handleEditChange}
-                  required
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <input
-                  type="text"
-                  name="location"
-                  placeholder="Location"
-                  value={editForm.location}
-                  onChange={handleEditChange}
-                  required
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                />
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <textarea
-                  name="description"
-                  placeholder="Description"
-                  value={editForm.description}
-                  onChange={handleEditChange}
-                  rows="4"
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                />
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <select
-                  name="status"
-                  value={editForm.status}
-                  onChange={handleEditChange}
-                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-                >
-                  <option value="Available">Available</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Adopted">Adopted</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <input
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleEditChange}
-                  style={{ width: '100%', padding: '8px' }}
-                />
-                <small>Leave empty to keep current image</small>
-              </div>
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#6c757d',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Update Pet
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }

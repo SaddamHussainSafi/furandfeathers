@@ -46,10 +46,10 @@ export default function SuccessStories() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '2rem'
-              }}>
-                🐾
-              </div>
+            fontSize: '2rem'
+          }}>
+            <img src="https://cdn-icons-png.flaticon.com/512/1864/1864514.png" alt="Paw icon" width="40" height="40" loading="lazy" />
+          </div>
               <blockquote style={{
                 fontStyle: 'italic',
                 color: '#666',

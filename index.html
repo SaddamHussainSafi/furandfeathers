@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Earth Hand Mimic</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #020205; font-family: sans-serif; }
+        canvas { display: block; }
+        #video-input { display: none; transform: scaleX(-1); }
+        
+        #status {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: #00ffff; font-size: 1rem; letter-spacing: 2px;
+            text-transform: uppercase; opacity: 0.8; pointer-events: none;
+            text-shadow: 0 0 10px #00ffff;
+        }
+    </style>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div id="status">Initializing Neural Link...</div>
+    <video id="video-input"></video>
+
+    <script>
+        // --- CONFIGURATION ---
+        const PARTICLE_COUNT = 3500;
+        const PARTICLE_SIZE = 0.12;
+        const LERP_SPEED = 0.15; // 0.1 = smooth/laggy, 0.3 = fast/strict
+        
+        // --- THREE.JS SETUP ---
+        const scene = new THREE.Scene();
+        // Digital fog
+        scene.fog = new THREE.FogExp2(0x020205, 0.035);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 18;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        // --- PARTICLE SYSTEM ---
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const colors = new Float32Array(PARTICLE_COUNT * 3);
+        
+        // Custom attribute to store which "bone" of the hand a particle belongs to
+        // -1 = random/palm, 0-20 = specific finger segments
+        const particleIndices = new Float32Array(PARTICLE_COUNT);
+        const particleOffsets = new Float32Array(PARTICLE_COUNT * 3); // Random jitter for volume
+
+        const colorObj = new THREE.Color();
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            // Start positions (Random Cloud)
+            positions[i * 3] = (Math.random() - 0.5) * 50;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+
+            // Assign particle to a random bone index (0 to 20 are landmarks)
+            // We basically say: "You belong to the link between landmark X and Y"
+            particleIndices[i] = Math.floor(Math.random() * 21);
+
+            // Give it a random offset so it's not a thin line, but a thick "flesh" volume
+            const thickness = 0.6; 
+            particleOffsets[i * 3] = (Math.random() - 0.5) * thickness;
+            particleOffsets[i * 3 + 1] = (Math.random() - 0.5) * thickness;
+            particleOffsets[i * 3 + 2] = (Math.random() - 0.5) * thickness;
+
+            // Tech Colors (Cyan/Blue/White)
+            const type = Math.random();
+            if(type > 0.9) colorObj.setHex(0xffffff); // White Sparkle
+            else if(type > 0.6) colorObj.setHex(0x00ffff); // Cyan
+            else colorObj.setHex(0x0055ff); // Deep Blue
+
+            colors[i * 3] = colorObj.r;
+            colors[i * 3 + 1] = colorObj.g;
+            colors[i * 3 + 2] = colorObj.b;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        // Digital Dot Texture
+        const sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/spark1.png');
+
+        const material = new THREE.PointsMaterial({
+            size: PARTICLE_SIZE,
+            map: sprite,
+            vertexColors: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.9
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        // --- HAND SKELETON MAP ---
+        // Defines who connects to whom
+        const BONES = [
+            [0, 1], [1, 2], [2, 3], [3, 4],       // Thumb
+            [0, 5], [5, 6], [6, 7], [7, 8],       // Index
+            [0, 9], [9, 10], [10, 11], [11, 12],  // Middle
+            [0, 13], [13, 14], [14, 15], [15, 16],// Ring
+            [0, 17], [17, 18], [18, 19], [19, 20],// Pinky
+            [5, 9], [9, 13], [13, 17]             // Palm cross-connections
+        ];
+
+        // --- STATE ---
+        let isHandDetected = false;
+        let landmarksData = []; // Stores the 21 points
+        let time = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.005;
+
+            const pos = particles.geometry.attributes.position.array;
+
+            // Target calculations
+            if (isHandDetected && landmarksData.length > 0) {
+                document.getElementById('status').innerText = "System Locked: Hand Tracking Active";
+                
+                // --- HAND MODE ---
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const i3 = i * 3;
+                    
+                    // 1. Determine which "Bone" this particle belongs to
+                    // We distribute particles evenly across the defined bones
+                    const boneIndex = i % BONES.length; 
+                    const bone = BONES[boneIndex];
+                    
+                    const pStart = landmarksData[bone[0]];
+                    const pEnd = landmarksData[bone[1]];
+
+                    // 2. Interpolate along the bone (random spot between start and end)
+                    // We use a pseudo-random value fixed to 'i' so particles don't jitter along the bone
+                    const t = ((i * 123.45) % 100) / 100; 
+
+                    const tx = pStart.x + (pEnd.x - pStart.x) * t;
+                    const ty = pStart.y + (pEnd.y - pStart.y) * t;
+                    const tz = pStart.z + (pEnd.z - pStart.z) * t;
+
+                    // 3. Apply Offset (Volume)
+                    // We scale offset based on depth to make it look 3D
+                    const targetX = tx + particleOffsets[i3];
+                    const targetY = ty + particleOffsets[i3+1];
+                    const targetZ = tz + particleOffsets[i3+2];
+
+                    // 4. Strict Lerp (Move fast to target)
+                    pos[i3]   += (targetX - pos[i3]) * LERP_SPEED;
+                    pos[i3+1] += (targetY - pos[i3+1]) * LERP_SPEED;
+                    pos[i3+2] += (targetZ - pos[i3+2]) * LERP_SPEED;
+                }
+
+                // Add slight rotation based on hand tilt? 
+                // For strict mimicry, we don't rotate the scene, we let the hand do the work.
+                particles.rotation.y += (0 - particles.rotation.y) * 0.1; // Reset rotation
+
+            } else {
+                document.getElementById('status').innerText = "Signal Lost. Returning to Orbit.";
+
+                // --- GLOBE MODE (Idle) ---
+                // Form a sphere
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const i3 = i * 3;
+
+                    // Golden Angle distribution for perfect sphere
+                    const phi = Math.acos(-1 + (2 * i) / PARTICLE_COUNT);
+                    const theta = Math.sqrt(PARTICLE_COUNT * Math.PI) * phi;
+                    
+                    const r = 6; // Radius of globe
+
+                    const tx = r * Math.cos(theta) * Math.sin(phi);
+                    const ty = r * Math.sin(theta) * Math.sin(phi);
+                    const tz = r * Math.cos(phi);
+
+                    // Lerp to sphere
+                    pos[i3]   += (tx - pos[i3]) * 0.05;
+                    pos[i3+1] += (ty - pos[i3+1]) * 0.05;
+                    pos[i3+2] += (tz - pos[i3+2]) * 0.05;
+                }
+
+                // Rotate the globe
+                particles.rotation.y -= 0.005;
+                particles.rotation.z = Math.sin(time) * 0.1;
+            }
+
+            particles.geometry.attributes.position.needsUpdate = true;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+
+        // --- MEDIAPIPE LOGIC ---
+        const videoElement = document.getElementById('video-input');
+
+        function onResults(results) {
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                isHandDetected = true;
+                const rawLandmarks = results.multiHandLandmarks[0];
+
+                // Convert MediaPipe (0-1) to Three.js World Coordinates
+                // We do this ONCE per frame for all 21 points to save CPU
+                const depthScale = 15;
+                const vFOV = THREE.MathUtils.degToRad(75);
+                const height = 2 * Math.tan(vFOV / 2) * 18; // z=18
+                const width = height * camera.aspect;
+
+                landmarksData = rawLandmarks.map(p => {
+                    return {
+                        x: (1 - p.x) * width - (width/2),   // Mirror X
+                        y: ((1 - p.y) * height - (height/2)) * -1, // Flip Y
+                        z: p.z * -depthScale // MediaPipe Z is generic, we scale it up
+                    };
+                });
+
+            } else {
+                isHandDetected = false;
+            }
+        }
+
+        const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+        
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.6, // Higher confidence for cleaner shape
+            minTrackingConfidence: 0.6
+        });
+
+        hands.onResults(onResults);
+
+        const cameraFeed = new Camera(videoElement, {
+            onFrame: async () => { await hands.send({image: videoElement}); },
+            width: 640, height: 480
+        });
+        cameraFeed.start();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>

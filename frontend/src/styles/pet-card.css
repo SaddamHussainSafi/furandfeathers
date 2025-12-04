@@ -17,6 +17,17 @@
   width: 100%;
   height: 100%;
   isolation: isolate;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pet-card--clickable {
+  cursor: pointer;
+}
+
+.pet-card--clickable:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 4px;
 }
 
 .pet-card::after {

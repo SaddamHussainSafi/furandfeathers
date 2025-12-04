@@ -43,7 +43,7 @@ export default function AIMatchmaking() {
 
   useEffect(() => {
     catSoundPool.current = CAT_SOUND_FILENAMES.map(name => {
-      const audio = new Audio(`http://localhost:8080/uploads/sounds/${name}`);
+      const audio = new Audio(`/uploads/sounds/${name}`);
       audio.crossOrigin = 'anonymous';
       audio.preload = 'auto';
       audio.volume = 0.8;
@@ -116,18 +116,17 @@ export default function AIMatchmaking() {
   }, []);
 
   const POPUP_MESSAGES = [
-    "Don't poke me 😾",
-    "Easy there 🙀",
-    "Hiss mode off 😼",
-    "Okay okay 😺",
-    "Gentle paws please 😽",
-    "I'm on break 😿",
-    "Respect the whiskers 😸",
-    "Nap in progress 😴",
-    "Try treats instead 😻",
-    "Mood: mysterious 😹", 
-    "Stalking butterflies 🐾"
-
+    "Don't poke me",
+    "Easy there",
+    "Hiss mode off",
+    "Okay okay",
+    "Gentle paws please",
+    "I'm on break",
+    "Respect the whiskers",
+    "Nap in progress",
+    "Try treats instead",
+    "Mood: mysterious",
+    "Stalking butterflies"
   ];
 
   const handleCatClick = () => {

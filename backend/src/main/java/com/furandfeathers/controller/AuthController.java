@@ -1,22 +1,25 @@
 package com.furandfeathers.controller;
 
+import com.furandfeathers.dto.SignupRequest;
 import com.furandfeathers.entity.User;
 import com.furandfeathers.repository.UserRepository;
 import com.furandfeathers.service.GoogleAuthService;
 import com.furandfeathers.service.JwtService;
 import com.furandfeathers.enums.UserRole;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(origins = { "https://ff.saddamhussain.com.np", "http://ff.saddamhussain.com.np" })
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -31,32 +34,40 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public Map<String, Object> signup(@RequestBody Map<String, String> req) {
-        String email = req.get("email");
-        if (userRepository.findByEmail(email).isPresent()) {
-            return Map.of("status", "error", "message", "Email already exists");
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest req, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> validationErrors = bindingResult.getFieldErrors().stream()
+                    .collect(
+                            LinkedHashMap::new,
+                            (acc, error) -> acc.putIfAbsent(error.getField(), error.getDefaultMessage()),
+                            LinkedHashMap::putAll);
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "error",
+                    "message", "Validation failed",
+                    "errors", validationErrors));
         }
 
-        // --- get and validate role ---
-        String roleString = req.getOrDefault("role", "SHELTER").toUpperCase();
-        if (!roleString.equals("ADOPTER") && !roleString.equals("SHELTER")) {
-            roleString = "SHELTER"; // fallback if someone sends something else
+        String email = req.email().trim().toLowerCase();
+        if (userRepository.findByEmail(email).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("status", "error", "message", "Email already exists"));
         }
+
+        String roleString = req.role().trim().toUpperCase(Locale.ROOT);
         UserRole role = UserRole.valueOf(roleString);
 
         User user = User.builder()
-            .name(req.get("name"))
-            .email(email)
-            .password(encoder.encode(req.get("password")))
-            .provider("local")
-            .role(role)
-            .build();
+                .name(req.name().trim().replaceAll("\\s+", " "))
+                .email(email)
+                .password(encoder.encode(req.password()))
+                .provider("local")
+                .role(role)
+                .build();
 
         userRepository.save(user);
-    // ensure role claim is a simple string so JWT payload is predictable for frontend
-    String token = jwtService.generateToken(user.getEmail(), Map.of("role", user.getRole().toString()));
+        String token = jwtService.generateToken(user.getEmail(), Map.of("role", user.getRole().toString()));
 
-        return Map.of("status", "success", "token", token, "user", user);
+        return ResponseEntity.ok(Map.of("status", "success", "token", token, "user", user));
     }
 
     @PostMapping("/login")
@@ -65,7 +76,8 @@ public class AuthController {
         String password = req.get("password");
 
         Optional<User> optUser = userRepository.findByEmail(email);
-        if (optUser.isEmpty()) return Map.of("status", "error", "message", "User not found");
+        if (optUser.isEmpty())
+            return Map.of("status", "error", "message", "User not found");
 
         User user = optUser.get();
         if (!encoder.matches(password, user.getPassword()))
@@ -76,12 +88,21 @@ public class AuthController {
 
     @PostMapping("/google")
     public Map<String, Object> googleLogin(@RequestBody Map<String, String> req) {
-        return googleAuthService.verifyGoogleToken(req.get("idToken"))
-            .map(user -> Map.of(
-                "status", "success",
-                "token", jwtService.generateToken(user.getEmail(), Map.of("role", user.getRole().toString())),
-                "user", user))
-            .orElse(Map.of("status", "error", "message", "Google authentication failed"));
+        Optional<User> userOpt;
+        if (req.containsKey("idToken")) {
+            userOpt = googleAuthService.verifyGoogleToken(req.get("idToken"));
+        } else if (req.containsKey("accessToken")) {
+            userOpt = googleAuthService.verifyAccessToken(req.get("accessToken"));
+        } else {
+            return Map.of("status", "error", "message", "Missing token");
+        }
+
+        return userOpt
+                .map(user -> Map.of(
+                        "status", "success",
+                        "token", jwtService.generateToken(user.getEmail(), Map.of("role", user.getRole().toString())),
+                        "user", user))
+                .orElse(Map.of("status", "error", "message", "Google authentication failed"));
     }
 
     @GetMapping("/me")

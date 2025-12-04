@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,15 +32,15 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
- 
+
 @RestController
 @RequestMapping("/api/pets")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(origins = { "https://ff.saddamhussain.com.np", "http://ff.saddamhussain.com.np" })
 public class PetController {
 
     @Autowired
     private PetRepository petRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -70,8 +71,7 @@ public class PetController {
             @RequestPart("description") String description,
             @RequestPart(value = "status", required = false) String status,
             @RequestPart(value = "image", required = false) MultipartFile image,
-            Principal principal
-    ) throws IOException {
+            Principal principal) throws IOException {
 
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -94,15 +94,15 @@ public class PetController {
         pet.setDescription(description);
         pet.setStatus(status != null ? status : "Available");
         pet.setImagePath(fileName != null ? uploadDir + fileName : null);
-        pet.setImageUrl(fileName != null ? "http://localhost:8080/uploads/" + fileName : null);
+        pet.setImageUrl(fileName != null ? "/uploads/" + fileName : null);
         pet.setOwner(user);
 
-        // Set listing status based on user role
-        if (user.getRole() == com.furandfeathers.enums.UserRole.ADOPTER) {
-            pet.setListingStatus(com.furandfeathers.enums.ListingStatus.PENDING_REVIEW);
-        } else {
-            pet.setListingStatus(com.furandfeathers.enums.ListingStatus.APPROVED);
-        }
+        // Set listing status: only admin/superadmin auto-approve; everyone else requires review
+        boolean isAdmin = user.getRole() == com.furandfeathers.enums.UserRole.ADMIN ||
+                user.getRole() == com.furandfeathers.enums.UserRole.SUPERADMIN;
+        pet.setListingStatus(isAdmin
+                ? com.furandfeathers.enums.ListingStatus.APPROVED
+                : com.furandfeathers.enums.ListingStatus.PENDING_REVIEW);
 
         petRepository.save(pet);
         return ResponseEntity.ok("Pet added successfully");
@@ -110,26 +110,27 @@ public class PetController {
 
     // 2 All pets (public)
     @GetMapping
-    public List<PetResponse> getAllPets(@RequestParam(required = false) Integer limit, @RequestParam(required = false) Boolean featured, Principal principal) {
+    public List<PetResponse> getAllPets(@RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) Boolean featured, Principal principal) {
         List<Pet> pets;
-        
+
         // Check if user is authenticated and is admin/superadmin
         boolean isAdmin = false;
         if (principal != null) {
             Optional<User> userOpt = userRepository.findByEmail(principal.getName());
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
-                isAdmin = user.getRole() == com.furandfeathers.enums.UserRole.ADMIN || 
-                         user.getRole() == com.furandfeathers.enums.UserRole.SUPERADMIN;
+                isAdmin = user.getRole() == com.furandfeathers.enums.UserRole.ADMIN ||
+                        user.getRole() == com.furandfeathers.enums.UserRole.SUPERADMIN;
             }
         }
-        
+
         if (isAdmin) {
             pets = petRepository.findAllWithOwners();
         } else {
             pets = petRepository.findByListingStatus(com.furandfeathers.enums.ListingStatus.APPROVED);
         }
-        
+
         if (limit != null && limit > 0) {
             pets = pets.stream().limit(limit).toList();
         }
@@ -148,11 +149,33 @@ public class PetController {
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPERADMIN')")
     public ResponseEntity<?> approvePet(@PathVariable Long id, Principal principal) {
+        User approver = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
 
         if (pet.getListingStatus() != com.furandfeathers.enums.ListingStatus.PENDING_REVIEW) {
             return ResponseEntity.badRequest().body("Pet is not pending review");
+        }
+
+        // Prevent owners approving their own listings
+        if (pet.getOwner() != null && pet.getOwner().getId().equals(approver.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot approve your own listing");
+        }
+
+        // Only approve shelter (or admin) listings; reject unknown roles
+        if (pet.getOwner() != null &&
+                pet.getOwner().getRole() != com.furandfeathers.enums.UserRole.SHELTER &&
+                pet.getOwner().getRole() != com.furandfeathers.enums.UserRole.ADMIN) {
+            return ResponseEntity.badRequest().body("Only shelter/admin listings can be approved");
+        }
+
+        // If the owner is ADMIN, require a different admin/superadmin to approve
+        if (pet.getOwner() != null && pet.getOwner().getRole() == com.furandfeathers.enums.UserRole.ADMIN) {
+            if (approver.getRole() == com.furandfeathers.enums.UserRole.ADMIN &&
+                    pet.getOwner().getId().equals(approver.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Another admin must approve this listing");
+            }
         }
 
         pet.setListingStatus(com.furandfeathers.enums.ListingStatus.APPROVED);
@@ -197,6 +220,9 @@ public class PetController {
     // 3 Logged-in users pets
     @GetMapping("/my-pets")
     public List<PetResponse> getMyPets(Principal principal) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         List<Pet> pets = petRepository.findByOwner(user);
@@ -207,7 +233,8 @@ public class PetController {
     private PetResponse toResponse(Pet p, Principal principal) {
         OwnerDTO owner = null;
         if (p.getOwner() != null) {
-            owner = new OwnerDTO(p.getOwner().getId(), p.getOwner().getName(), p.getOwner().getEmail(), p.getOwner().getPicture());
+            owner = new OwnerDTO(p.getOwner().getId(), p.getOwner().getName(), p.getOwner().getEmail(),
+                    p.getOwner().getPicture());
         }
 
         boolean isSaved = false;
@@ -219,23 +246,22 @@ public class PetController {
         }
 
         return new PetResponse(
-            p.getId(),
-            p.getName(),
-            p.getSpecies(),
-            p.getBreed(),
-            p.getAge(),
-            p.getGender(),
-            p.getLocation(),
-            p.getDescription(),
-            p.getStatus(),
-            p.getImageUrl(),
-            p.getImagePath(),
-            p.getListingStatus().toString(),
-            owner,
-            null, // likes count
-            false, // liked
-            isSaved
-        );
+                p.getId(),
+                p.getName(),
+                p.getSpecies(),
+                p.getBreed(),
+                p.getAge(),
+                p.getGender(),
+                p.getLocation(),
+                p.getDescription(),
+                p.getStatus(),
+                p.getImageUrl(),
+                p.getImagePath(),
+                p.getListingStatus().toString(),
+                owner,
+                null, // likes count
+                false, // liked
+                isSaved);
     }
 
     // 4 Update pet
@@ -251,13 +277,18 @@ public class PetController {
             @RequestPart("description") String description,
             @RequestPart(value = "status", required = false) String status,
             @RequestPart(value = "image", required = false) MultipartFile image,
-            Principal principal
-    ) throws IOException {
+            Principal principal) throws IOException {
 
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
 
-        if (!pet.getOwner().getEmail().equals(principal.getName()))
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isAdmin = user.getRole() == com.furandfeathers.enums.UserRole.ADMIN ||
+                user.getRole() == com.furandfeathers.enums.UserRole.SUPERADMIN;
+
+        if (!pet.getOwner().getEmail().equals(principal.getName()) && !isAdmin)
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized");
 
         pet.setName(name);
@@ -275,7 +306,7 @@ public class PetController {
             String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
             Files.copy(image.getInputStream(), Paths.get(uploadDir + fileName), StandardCopyOption.REPLACE_EXISTING);
             pet.setImagePath(uploadDir + fileName);
-            pet.setImageUrl("http://localhost:8080/uploads/" + fileName);
+            pet.setImageUrl("/uploads/" + fileName);
         }
 
         petRepository.save(pet);
@@ -287,7 +318,14 @@ public class PetController {
     public ResponseEntity<?> deletePet(@PathVariable Long id, Principal principal) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
-        if (!pet.getOwner().getEmail().equals(principal.getName()))
+
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isAdmin = user.getRole() == com.furandfeathers.enums.UserRole.ADMIN ||
+                user.getRole() == com.furandfeathers.enums.UserRole.SUPERADMIN;
+
+        if (!pet.getOwner().getEmail().equals(principal.getName()) && !isAdmin)
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized");
 
         petRepository.delete(pet);
@@ -338,7 +376,7 @@ public class PetController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("SavedPetRepository not injected");
             }
-            
+
             User user = userRepository.findByEmail(principal.getName())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             Pet pet = petRepository.findById(id)
@@ -382,7 +420,8 @@ public class PetController {
                             pet.getImageUrl(),
                             pet.getImagePath(),
                             pet.getListingStatus().toString(),
-                            new OwnerDTO(pet.getOwner().getId(), pet.getOwner().getName(), pet.getOwner().getEmail(), pet.getOwner().getPicture()),
+                            new OwnerDTO(pet.getOwner().getId(), pet.getOwner().getName(), pet.getOwner().getEmail(),
+                                    pet.getOwner().getPicture()),
                             null, // likes count - can be added later if needed
                             false, // liked - can be added later if needed
                             true // isSaved - since these are saved pets
@@ -395,7 +434,8 @@ public class PetController {
 
     // Comment endpoints
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable Long id, @RequestBody CommentRequest request, Principal principal) {
+    public ResponseEntity<?> addComment(@PathVariable Long id, @RequestBody CommentRequest request,
+            Principal principal) {
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Pet pet = petRepository.findById(id)
@@ -418,7 +458,8 @@ public class PetController {
                 c.getId(),
                 c.getContent(),
                 c.getCreatedAt(),
-                new OwnerDTO(c.getUser().getId(), c.getUser().getName(), c.getUser().getEmail(), c.getUser().getPicture())
-        )).toList();
+                new OwnerDTO(c.getUser().getId(), c.getUser().getName(), c.getUser().getEmail(),
+                        c.getUser().getPicture())))
+                .toList();
     }
 }

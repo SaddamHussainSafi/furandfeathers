@@ -5,7 +5,7 @@ import DesktopNavbar from './DesktopNavbar';
 import Sidebar from './Sidebar';
 import '../styles/layout.css';
 
-const HEADER_LOGO = 'http://localhost:8080/uploads/logo/Logo.svg';
+const HEADER_LOGO = '/uploads/logo/Logo.svg';
 
 const NAV_SECTIONS = [
   {
@@ -172,4 +172,3 @@ function MobileNavbar() {
     </header>
   );
 }
-

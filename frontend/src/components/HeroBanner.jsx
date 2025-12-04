@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import "../styles/hero-banner.css";
 
-const HERO_VIDEO = "http://localhost:8080/uploads/logo/Main_banner_video.mp4";
+const HERO_VIDEO = '/uploads/logo/Main_banner_video.mp4';
 
 const HeroBanner = () => {
   const [videoReady, setVideoReady] = useState(false);

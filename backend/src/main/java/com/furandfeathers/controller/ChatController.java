@@ -1,6 +1,6 @@
 package com.furandfeathers.controller;
 
-import com.furandfeathers.service.MistralService;
+import com.furandfeathers.service.GeminiService;
 import com.furandfeathers.service.PetRecommendationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import java.util.Map;
 public class ChatController {
 
     @Autowired
-    private MistralService mistralService;
+    private GeminiService geminiService;
 
     @Autowired
     private PetRecommendationService recommendationService;
@@ -24,7 +24,7 @@ public class ChatController {
             return ResponseEntity.badRequest().body(Map.of("error", "Message is required"));
         }
 
-        var response = mistralService.chat(userMessage);
+        var response = geminiService.chat(userMessage);
         return ResponseEntity.ok(response);
     }
 

@@ -28,12 +28,17 @@ const loadGoogleMapsScript = () => {
       return;
     }
 
+    const callbackName = 'googleMapsCallback';
+    window[callbackName] = () => {
+      resolve(window.google.maps);
+      delete window[callbackName];
+    };
+
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async&callback=${callbackName}`;
     script.async = true;
     script.defer = true;
     script.dataset.googleMaps = 'true';
-    script.onload = () => resolve(window.google.maps);
     script.onerror = reject;
     document.head.appendChild(script);
   });

@@ -9,16 +9,15 @@ export default function HeroSection() {
     if (user) {
       if (user.role === 'shelter' || user.role === 'admin') {
         return { text: 'Manage Pets', link: '/manage-pets' };
-      } else {
-        return { text: 'Go to Dashboard', link: '/dashboard' };
       }
+      return { text: 'Go to Dashboard', link: '/dashboard' };
     }
-    return { text: '🐾 Browse Pets', link: '/pets' };
+    return { text: 'Browse Pets', link: '/pets', icon: 'https://cdn-icons-png.flaticon.com/512/1864/1864514.png' };
   };
 
   const getSecondaryButton = () => {
     if (!user) {
-      return { text: '💬 Join as Shelter', link: '/register?shelter' };
+      return { text: 'Join as Shelter', link: '/register?shelter' };
     }
     return null;
   };
@@ -33,7 +32,7 @@ export default function HeroSection() {
       alignItems: 'center',
       background: 'linear-gradient(135deg, #46b5a7 0%, #fff8ee 100%)',
       color: '#333',
-      padding: '80px 20px 20px', // padding-top for fixed navbar
+      padding: '80px 20px 20px',
       position: 'relative'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '50px' }} className="hero-section">
@@ -71,6 +70,9 @@ export default function HeroSection() {
               onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
               onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
             >
+              {primaryBtn.icon && (
+                <img src={primaryBtn.icon} alt="" width="20" height="20" style={{ verticalAlign: 'middle', marginRight: '10px' }} loading="lazy" />
+              )}
               {primaryBtn.text}
             </Link>
             {secondaryBtn && (
@@ -102,7 +104,6 @@ export default function HeroSection() {
           </div>
         </div>
         <div style={{ flex: 1, textAlign: 'center', animation: 'fadeInRight 1s ease-out' }} className="hero-image">
-          {/* Placeholder for illustration */}
           <div style={{
             width: '400px',
             height: '400px',
@@ -114,7 +115,7 @@ export default function HeroSection() {
             justifyContent: 'center',
             fontSize: '4rem'
           }}>
-            🐶❤️🐱
+            <img src="https://cdn-icons-png.flaticon.com/512/1864/1864514.png" alt="Paw icon" width="140" height="140" loading="lazy" />
           </div>
         </div>
       </div>

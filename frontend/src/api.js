@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api", // backend base URL
+  // Same-origin /api by default so Vite proxy handles local dev; override via VITE_API_BASE_URL if needed.
+  baseURL: import.meta.env?.VITE_API_BASE_URL || "/api",
 });
 
 api.interceptors.request.use((config) => {

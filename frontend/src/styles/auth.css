@@ -225,6 +225,18 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
 
+.auth-input--error input,
+.auth-input--error select {
+  border-color: rgba(248, 113, 113, 0.8);
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
+}
+
+.auth-input__error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #b91c1c;
+}
+
 .auth-form__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -252,6 +264,16 @@
 
 .auth-checkbox input {
   margin-top: 0.2rem;
+}
+
+.auth-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.auth-checkbox-group--error .auth-checkbox {
+  color: #b91c1c;
 }
 
 .auth-submit {
@@ -316,6 +338,35 @@
 
 .auth-social__button--facebook {
   border-color: rgba(59, 89, 152, 0.35);
+}
+
+.auth-google {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.95rem 1rem;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.auth-google:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
+}
+
+.auth-google svg {
+  width: 20px;
+  height: 20px;
 }
 
 .auth-feedback {

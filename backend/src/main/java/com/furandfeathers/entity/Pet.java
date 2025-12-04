@@ -35,7 +35,7 @@ public class Pet {
     @Enumerated(EnumType.STRING)
     @Column(name = "listing_status")
     @Builder.Default
-    private ListingStatus listingStatus = ListingStatus.APPROVED;
+    private ListingStatus listingStatus = ListingStatus.PENDING_REVIEW;
 
     @Column(name = "reviewed_by")
     private Long reviewedBy;

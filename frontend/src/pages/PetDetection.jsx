@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import SectionHero from "../components/SectionHero";
 import "../styles/forms.css";
 
@@ -50,7 +50,7 @@ const PetDetection = () => {
     const formData = new FormData();
     formData.append("image", image);
     try {
-      const res = await axios.post("http://localhost:8080/api/ai/pet-detect", formData, {
+      const res = await api.post("/ai/pet-detect", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResult(res.data.analysis);

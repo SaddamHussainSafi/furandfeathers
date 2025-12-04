@@ -14,16 +14,10 @@ export default function EditPet() {
 
     const fetchPet = async () => {
       try {
-        const response = await api.get('/pets/my-pets');
-        const numericId = Number(id);
-        const found = response.data.find((pet) => pet.id === numericId || pet.id === id);
-
-        if (!found) {
-          throw new Error('We could not find that pet profile.');
-        }
+        const response = await api.get(`/pets/${id}`);
 
         if (isActive) {
-          setInitialPet(found);
+          setInitialPet(response.data);
         }
       } catch (err) {
         if (isActive) {

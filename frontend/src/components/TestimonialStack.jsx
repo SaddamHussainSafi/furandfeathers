@@ -310,7 +310,6 @@ export default function TestimonialStack() {
                 </div>
 
                 <blockquote>{item.quote}</blockquote>
-                <p className="testimonial-card__summary">{item.summary}</p>
 
                 <ul className="testimonial-card__tags">
                   {item.tags.map(tag => (

@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import PublicLayout from './components/layout/PublicLayout';
 import Home from './pages/Home';
@@ -10,26 +10,12 @@ import DashboardAdopter from './pages/adopter/DashboardAdopter';
 import DashboardShelter from './pages/shelter/DashboardShelter';
 import DashboardAdmin from './pages/admin/DashboardAdmin';
 import SuperAdminDashboard from './components/SuperAdminDashboard';
-import { AuthContext } from './context/AuthContext';
+import { AuthContext, AuthProvider } from './context/AuthContext';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
-
-function ProtectedRoute({ children }) {
-  const { user } = useContext(AuthContext);
-  return user ? children : <Navigate to="/login" />;
-}
-
-function DashboardLayout({ children }) {
-  return (
-    <MainLayout>
-      {children}
-    </MainLayout>
-  );
-}
-
 import Pets from './pages/Pets';
 import PetDetails from './pages/PetDetails';
 import Applications from './pages/Applications';
@@ -45,12 +31,64 @@ import PetDetectionHistory from './pages/PetDetectionHistory';
 import FurlyChat from './pages/FurlyChat';
 import AdoptionForm from './pages/AdoptionForm';
 import ManageAdoptions from './pages/ManageAdoptions';
+import PetApprovals from './pages/PetApprovals';
+import GlobalLoader from './components/GlobalLoader';
+import GoogleOneTapLogin from './components/GoogleOneTapLogin';
+
+function ProtectedRoute({ children }) {
+  const { user } = useContext(AuthContext);
+  return user ? children : <Navigate to="/login" />;
+}
+
+function DashboardLayout({ children }) {
+  return (
+    <MainLayout>
+      {children}
+    </MainLayout>
+  );
+}
 
 export default function App() {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const [loaderVisible, setLoaderVisible] = useState(location.pathname === "/");
+  const [loaderExiting, setLoaderExiting] = useState(false);
+  const exitTimerRef = useRef(null);
+  const hideTimerRef = useRef(null);
+  const firstRouteRef = useRef(true);
+
+  const EXIT_ANIM_MS = 520;
+
+  useEffect(() => {
+    // Show loader only on first load of homepage
+    if (firstRouteRef.current && location.pathname === "/") {
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      setLoaderVisible(true);
+      setLoaderExiting(false);
+      hideTimerRef.current = setTimeout(() => {
+        setLoaderExiting(true);
+        exitTimerRef.current = setTimeout(() => setLoaderVisible(false), EXIT_ANIM_MS);
+      }, 1800);
+    } else {
+      setLoaderVisible(false);
+      setLoaderExiting(false);
+    }
+    firstRouteRef.current = false;
+    return () => {
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="app-container">
+      <GlobalLoader
+        visible={loaderVisible}
+        exiting={loaderExiting}
+        label="Loading your experience..."
+      />
+      <GoogleOneTapLogin />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
@@ -92,6 +130,7 @@ export default function App() {
         <Route path="/manage-adoptions" element={<ProtectedRoute><MainLayout><ManageAdoptions /></MainLayout></ProtectedRoute>} />
         <Route path="/my-pets" element={<ProtectedRoute><MainLayout><MyPets /></MainLayout></ProtectedRoute>} />
         <Route path="/edit-pet/:id" element={<ProtectedRoute><MainLayout><EditPet /></MainLayout></ProtectedRoute>} />
+        <Route path="/pet-approvals" element={<ProtectedRoute><MainLayout><PetApprovals /></MainLayout></ProtectedRoute>} />
       </Routes>
     </div>
   );

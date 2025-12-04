@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { slugifyPetName } from '../utils/petSlug';
 import '../styles/pet-card.css';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 
 const placeholderImage = 'https://place-puppy.com/400x400';
 
@@ -18,10 +19,8 @@ const resolveImageSrc = (...sources) => {
     if (typeof value === 'string' && value.trim().length > 0) {
       const trimmed = value.trim();
       const sanitized = trimmed.replace(/\\/g, '/');
-      if (/^https?:\/\//i.test(sanitized)) {
-        return sanitized;
-      }
-      return `http://localhost:8080/${sanitized.replace(/^\/+/, '')}`;
+      const normalized = normalizeMediaUrl(sanitized);
+      if (normalized) return normalized;
     }
   }
   return null;
@@ -44,8 +43,10 @@ const PetCard = ({ pet }) => {
   const locationLabel =
     getCityFromLocation(pet.location) || pet.shelter || 'City shared after match';
 
+  const slug = slugifyPetName(pet.name);
+
   return (
-    <article className="pet-card">
+    <Link to={`/pet/${slug}`} className="pet-card pet-card--clickable" aria-label={`View ${pet.name}`}>
       <div className="pet-card__media">
         <img src={imgSrc} alt={pet.name} loading="lazy" />
         {pet.status && (
@@ -83,15 +84,9 @@ const PetCard = ({ pet }) => {
       </div>
 
       <div className="pet-card__footer">
-        <Link
-          to={`/pet/${slugifyPetName(pet.name)}`}
-          className="pet-card__cta"
-          aria-label={`View ${pet.name}`}
-        >
-          View profile
-        </Link>
+        <span className="pet-card__cta">View profile</span>
       </div>
-    </article>
+    </Link>
   );
 };
 

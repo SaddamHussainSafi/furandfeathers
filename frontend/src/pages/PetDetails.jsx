@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../utils/api';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 import { unslugifyPetName, slugifyPetName } from '../utils/petSlug';
 import SectionHero from '../components/SectionHero';
 import PetCard from '../components/PetCard';
@@ -68,13 +69,20 @@ export default function PetDetails() {
   };
 
   const handleAdopt = () => {
+    // Use the current slug from the URL to avoid mismatches with special characters
     if (!user) {
       navigate('/login');
       return;
     }
     if (pet?.name) {
-      navigate(`/adopt/${slugifyPetName(pet.name)}`);
+      const targetSlug = petSlug || slugifyPetName(pet.name);
+      navigate(`/adopt/${encodeURIComponent(targetSlug)}`);
     }
+  };
+
+  const handleManagePet = () => {
+    if (!pet?.id) return;
+    navigate(`/edit-pet/${pet.id}`);
   };
 
   const handleLike = async () => {
@@ -107,7 +115,8 @@ export default function PetDetails() {
     );
   }
 
-  const isOwner = user && pet.owner && user.id === pet.owner.id;
+  const isOwner = user && pet.owner && Number(user.id) === Number(pet.owner.id);
+  const canManage = isOwner && ['SHELTER', 'ADMIN', 'SUPERADMIN'].includes(user.role);
   const storyCopy =
     storyMode === 'human'
       ? pet.story ||
@@ -122,16 +131,21 @@ export default function PetDetails() {
         subtitle={[pet.age && `${pet.age} years`, pet.breed, pet.location].filter(Boolean).join(' • ')}
         actions={
           <div className="form-hero__actions">
-            <button className="site-button site-button--secondary" onClick={handleMessageOwner}>
+            <button type="button" className="site-button site-button--secondary" onClick={handleMessageOwner}>
               Message shelter
             </button>
-            <button className="site-button site-button--primary" onClick={handleAdopt}>
+            <button type="button" className="site-button site-button--primary" onClick={handleAdopt}>
               Apply to adopt
             </button>
-            {isOwner && (
-              <button className="site-button site-button--secondary" onClick={handleDelete}>
-                Delete listing
-              </button>
+            {canManage && (
+              <>
+                <button type="button" className="site-button site-button--secondary" onClick={handleManagePet}>
+                  Manage this pet
+                </button>
+                <button type="button" className="site-button site-button--secondary" onClick={handleDelete}>
+                  Delete listing
+                </button>
+              </>
             )}
           </div>
         }
@@ -141,7 +155,7 @@ export default function PetDetails() {
         <div className="section-grid section-grid--two">
           <article className="surface-card">
             <div className="form-preview" style={{ marginTop: 0 }}>
-              <img src={pet.imageUrl || pet.image || '/placeholder.jpg'} alt={pet.name} />
+              <img src={normalizeMediaUrl(pet.imageUrl || pet.image || '/placeholder.jpg')} alt={pet.name} />
               <span>{pet.status || 'Available'}</span>
             </div>
           </article>

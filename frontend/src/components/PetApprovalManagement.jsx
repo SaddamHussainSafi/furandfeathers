@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Eye, AlertCircle } from 'lucide-react';
 import API from '../services/api';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 
 const PetApprovalManagement = () => {
   const [pendingPets, setPendingPets] = useState([]);
@@ -93,7 +94,7 @@ const PetApprovalManagement = () => {
                   <div className="flex items-center space-x-3">
                     {pet.imageUrl && (
                       <img
-                        src={pet.imageUrl}
+                        src={normalizeMediaUrl(pet.imageUrl)}
                         alt={pet.name}
                         className="h-16 w-16 rounded-lg object-cover"
                       />
@@ -171,7 +172,7 @@ const PetApprovalManagement = () => {
             <div className="space-y-4">
               {selectedPet.imageUrl && (
                 <img
-                  src={selectedPet.imageUrl}
+                  src={normalizeMediaUrl(selectedPet.imageUrl)}
                   alt={selectedPet.name}
                   className="w-full h-64 object-cover rounded-lg"
                 />

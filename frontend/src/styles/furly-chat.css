@@ -51,7 +51,12 @@
   gap: 0.75rem;
   color: var(--color-text);
 }
-
+.furly-chat-hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: var(--color-text);
+}
 .furly-chat-pill {
   align-self: flex-start;
   padding: 0.35rem 1.1rem;
@@ -146,6 +151,7 @@
   display: grid;
   grid-template-rows: auto minmax(380px, 1fr) auto;
   overflow: hidden;
+  margin-top: 1.5rem;
 }
 
 .furly-chat__window-header {
@@ -163,12 +169,14 @@
   align-items: center;
 }
 
-.furly-chat__window-dot {
+.furly-chat__window-avatar {
   width: 52px;
   height: 52px;
-  border-radius: 18px;
-  background: radial-gradient(circle at 35% 25%, rgba(14, 165, 233, 0.9), rgba(79, 70, 229, 0.85));
-  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.35);
+  border-radius: 16px;
+  background: rgba(236, 244, 255, 0.9);
+  box-shadow: 0 18px 36px -18px rgba(14, 165, 233, 0.45);
+  display: grid;
+  place-items: center;
 }
 
 .furly-chat__window-eyebrow {
@@ -317,12 +325,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(248, 250, 255, 0.75);
+  border-style: dashed;
 }
 
 .furly-chat__recommendations {
   border-top: 1px solid rgba(15, 23, 42, 0.08);
   margin-top: 0.75rem;
   padding-top: 0.75rem;
+}
+
+.furly-chat__quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.furly-chat__quick-replies button {
+  border-radius: 999px;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.furly-chat__quick-replies button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.furly-chat__quick-replies button:not(:disabled):hover {
+  background: rgba(59, 130, 246, 0.18);
+  transform: translateY(-1px);
 }
 
 .furly-chat__recommendations-label {
@@ -398,13 +436,28 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+.furly-chat__composer-note {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.7);
+  padding-top: 0.35rem;
+  flex-basis: 100%;
+}
+
+.furly-chat__composer-note--error {
+  color: #b91c1c;
+}
+
 .furly-chat__send {
   border: none;
-  border-radius: 24px;
+  border-radius: 22px;
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   color: #fff;
   font-weight: 600;
-  min-width: 140px;
+  min-width: 110px;
+  height: 48px;
+  padding: 0 1.4rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -457,4 +510,3 @@
     justify-content: center;
   }
 }
-

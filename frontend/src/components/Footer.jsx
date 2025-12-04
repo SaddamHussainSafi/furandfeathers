@@ -17,13 +17,13 @@ export default function Footer() {
           </p>
           <div className="site-footer__social">
             <a href="https://www.instagram.com" target="_blank" rel="noreferrer" aria-label="Visit our Instagram">
-              📸
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20" height="20" loading="lazy" />
             </a>
             <a href="https://www.facebook.com" target="_blank" rel="noreferrer" aria-label="Visit our Facebook">
-              👍
+              <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="20" height="20" loading="lazy" />
             </a>
             <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" aria-label="Visit our LinkedIn">
-              💼
+              <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="20" height="20" loading="lazy" />
             </a>
           </div>
         </div>
@@ -61,7 +61,7 @@ export default function Footer() {
       </div>
 
       <div className="site-footer__bottom">
-        <span>© {currentYear} Fur &amp; Feathers. All rights reserved.</span>
+        <span>&copy; {currentYear} Fur &amp; Feathers. All rights reserved.</span>
         <div className="site-footer__bottom-links">
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
@@ -73,4 +73,3 @@ export default function Footer() {
     </footer>
   );
 }
-

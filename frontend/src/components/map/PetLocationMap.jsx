@@ -66,10 +66,14 @@ export default function PetLocationMap({ address, petName }) {
         </a>
       </div>
       <div className="pet-location-map__canvas">
-        {status === 'ready' && <div ref={mapRef} />}
-        {status === 'loading' && <div className="pet-location-map__status">Locating address...</div>}
+        <div ref={mapRef} style={{ height: '100%', minHeight: '320px' }} />
+        {status === 'loading' && (
+          <div className="pet-location-map__status" style={{ position: 'absolute', inset: 0, background: 'rgba(248, 250, 255, 0.95)' }}>
+            Locating address...
+          </div>
+        )}
         {status === 'error' && (
-          <div className="pet-location-map__status">
+          <div className="pet-location-map__status" style={{ position: 'absolute', inset: 0, background: 'rgba(248, 250, 255, 0.95)' }}>
             {error ? 'Maps unavailable. Check API key.' : 'Unable to render location on map.'}
           </div>
         )}

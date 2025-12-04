@@ -165,6 +165,16 @@ img {
   .section-grid--fixed-four {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
+
+  .page-section {
+    padding: 2.25rem;
+    border-radius: 22px;
+  }
+
+  .surface-card {
+    padding: 2.25rem;
+    border-radius: 20px;
+  }
 }
 
 .surface-card {
@@ -183,6 +193,69 @@ img {
 .surface-card:focus-within {
   transform: translateY(-6px);
   box-shadow: var(--shadow-hover);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: calc(var(--header-height, 72px) + 10px);
+  }
+
+  .page {
+    padding: 0 1rem;
+  }
+
+  .page-section {
+    padding: 1.75rem;
+    border-radius: 18px;
+  }
+
+  .surface-card {
+    padding: 1.6rem;
+    gap: 1.25rem;
+  }
+
+  .section-heading {
+    font-size: clamp(1.8rem, 6vw, 2.2rem);
+  }
+
+  .section-subheading {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-grid {
+    gap: 1.1rem;
+  }
+
+  .section-grid--two,
+  .section-grid--three,
+  .section-grid--fixed-four {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0 0.75rem;
+  }
+
+  .page-section {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .surface-card {
+    padding: 1.4rem;
+    border-radius: 16px;
+  }
+
+  .section-heading {
+    font-size: clamp(1.6rem, 7vw, 2rem);
+  }
+
+  .section-subheading {
+    font-size: 0.95rem;
+  }
 }
 
 .related-card {
@@ -1232,7 +1305,134 @@ img {
 .testimonial-card__badge-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  row-gap: 0.25rem;
+}
+
+.cta-banner {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  min-height: 360px;
+  margin: 4rem 0;
+  box-shadow: var(--shadow-glass);
+  isolation: isolate;
+  padding: 0 1rem;
+}
+
+.cta-banner__shell {
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+.cta-banner__bg {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(120deg, rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.15)),
+    url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05);
+  z-index: -2;
+}
+
+.cta-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.18), transparent 50%);
+  z-index: -1;
+}
+
+.cta-banner__content {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  color: #fff;
+}
+
+.cta-banner__text h2 {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  margin: 0.2rem 0 0.35rem;
+}
+
+.cta-banner__subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+  max-width: 520px;
+}
+
+.cta-banner__form {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 1.1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft);
+}
+
+.cta-banner__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cta-banner__inputs {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr auto;
+  gap: 0.6rem;
+}
+
+.cta-banner__select,
+.cta-banner__input {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text);
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+}
+
+.cta-banner__input::placeholder {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.cta-banner__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.4rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #fff;
+  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  box-shadow: 0 14px 40px rgba(14, 165, 233, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.cta-banner__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 50px rgba(14, 165, 233, 0.4);
+}
+
+@media (max-width: 768px) {
+  .cta-banner {
+    margin: 3rem 0;
+    padding: 0 0.75rem;
+  }
+
+  .cta-banner__inputs {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pill {

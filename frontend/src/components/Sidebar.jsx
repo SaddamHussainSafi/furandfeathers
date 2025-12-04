@@ -118,9 +118,6 @@ export default function Sidebar({
                   <Link to="/applications" onClick={onClose}>
                     Applications
                   </Link>
-                  <Link to="/my-pets" onClick={onClose}>
-                    My Pets
-                  </Link>
                   <Link to="/pet-detection-history" onClick={onClose}>
                     Detection history
                   </Link>
@@ -132,6 +129,11 @@ export default function Sidebar({
                   {(user.role === "admin" || user.role === "superadmin") && (
                     <Link to="/manage-adoptions" onClick={onClose}>
                       Manage adoptions
+                    </Link>
+                  )}
+                  {(user.role === "admin" || user.role === "superadmin") && (
+                    <Link to="/pet-approvals" onClick={onClose}>
+                      Pet approvals
                     </Link>
                   )}
                   <button type="button" onClick={handleLogout}>

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://ff.saddamhussain.com.np", "http://ff.saddamhussain.com.np"})
 @RequiredArgsConstructor
 public class UserController {
 
@@ -48,7 +48,7 @@ public class UserController {
         Path destination = Paths.get(uploadDir + safeFileName);
         Files.copy(picture.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
-        user.setPicture("http://localhost:8080/" + uploadDir + safeFileName);
+        user.setPicture("/" + uploadDir + safeFileName);
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 

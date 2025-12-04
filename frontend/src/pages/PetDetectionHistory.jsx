@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import SectionHero from "../components/SectionHero";
 import "../styles/detection-history.css";
 
@@ -11,7 +11,7 @@ const PetDetectionHistory = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/ai/history");
+        const res = await api.get("/ai/history");
         setHistory(res.data);
       } catch (err) {
         console.error(err);

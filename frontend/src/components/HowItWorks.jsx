@@ -15,16 +15,16 @@ const STEP_DATA = [
     description:
       'Chat directly with shelters and submit your adoption application. Get all your questions answered in real-time.',
     image:
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Person chatting with a shelter representative'
+      'https://www.ovrs.com/blog/wp-content/uploads/2023/08/OVRS-connect-shutterstock_2132259743.jpeg',
+    alt: 'Shelter team member connecting with an adopter on a tablet'
   },
   {
     title: 'Adopt & Bring Home',
     description:
       'Complete the adoption process and welcome your new family member. We guide you through every step until you’re home together.',
     image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Pet parent hugging an adopted dog'
+      'https://cdn.shopify.com/s/files/1/1652/1243/files/health-benefit-dog-owners.jpg?v=1641886006',
+    alt: 'Pet parent holding their dog happily after adoption'
   }
 ];
 

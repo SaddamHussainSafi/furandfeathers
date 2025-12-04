@@ -34,9 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        String method = request.getMethod();
 
         // Skip JWT check for public endpoints
-        if (shouldBypassAuth(path)) {
+        if (shouldBypassAuth(path, method)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -51,14 +52,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     User user = userRepository.findByEmail(email).orElse(null);
                     if (user != null) {
                         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-                        );
+                                new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
                         UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(email)
-                            .password("")
-                            .authorities(authorities)
-                            .build();
-                        UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                                .password("")
+                                .authorities(authorities)
+                                .build();
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, authorities);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
@@ -70,13 +70,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean shouldBypassAuth(String path) {
-        return (path.startsWith("/api/auth/") && !path.equals("/api/auth/me")) ||
-               path.startsWith("/api/pets") ||
-               path.startsWith("/api/shelters") ||
-               path.startsWith("/api/ai/") ||
-               path.startsWith("/api/public") ||
-               path.startsWith("/api/furly") ||
-               path.startsWith("/uploads/");
+    private boolean shouldBypassAuth(String path, String method) {
+        if (path.startsWith("/api/auth/") && !path.equals("/api/auth/me")) {
+            return true;
+        }
+
+        if (path.startsWith("/api/shelters")
+                || path.startsWith("/api/ai/")
+                || path.startsWith("/api/public")
+                || path.startsWith("/api/furly")
+                || path.startsWith("/uploads/")) {
+            return true;
+        }
+
+        if ("GET".equalsIgnoreCase(method)) {
+            // Public pet browsing (list, details, likes/comments read)
+            if ("/api/pets".equals(path) || "/api/pets/".equals(path)) {
+                return true;
+            }
+            if (path.matches("^/api/pets/\\d+$")) {
+                return true;
+            }
+            if (path.startsWith("/api/pets/name/")) {
+                return true;
+            }
+            if (path.matches("^/api/pets/\\d+/likes$") || path.matches("^/api/pets/\\d+/comments$")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

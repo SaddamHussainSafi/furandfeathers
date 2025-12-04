@@ -14,19 +14,19 @@ const FilterSection = ({ onFiltersChange }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const speciesOptions = [
-    { id: "dog", label: "Dogs", emoji: "🐕" },
-    { id: "cat", label: "Cats", emoji: "🐈" },
-    { id: "bird", label: "Birds", emoji: "🐦" },
-    { id: "rabbit", label: "Rabbits", emoji: "🐰" },
-    { id: "other", label: "Others", emoji: "🐢" },
+    { id: "dog", label: "Dogs", icon: "https://cdn-icons-png.flaticon.com/512/620/620851.png" },
+    { id: "cat", label: "Cats", icon: "https://cdn-icons-png.flaticon.com/512/1818/1818401.png" },
+    { id: "bird", label: "Birds", icon: "https://cdn-icons-png.flaticon.com/512/616/616630.png" },
+    { id: "rabbit", label: "Rabbits", icon: "https://cdn-icons-png.flaticon.com/512/616/616408.png" },
+    { id: "other", label: "Others", icon: "https://cdn-icons-png.flaticon.com/512/616/616430.png" },
   ];
 
   const moodOptions = [
-    { id: "gentle", label: "Gentle", emoji: "💞" },
-    { id: "energetic", label: "Energetic", emoji: "⚡" },
-    { id: "calm", label: "Calm", emoji: "🌙" },
-    { id: "playful", label: "Playful", emoji: "🎾" },
-    { id: "kidFriendly", label: "Kid-friendly", emoji: "👶" },
+    { id: "gentle", label: "Gentle", icon: "https://cdn-icons-png.flaticon.com/512/2107/2107957.png" },
+    { id: "energetic", label: "Energetic", icon: "https://cdn-icons-png.flaticon.com/512/3103/3103446.png" },
+    { id: "calm", label: "Calm", icon: "https://cdn-icons-png.flaticon.com/512/1165/1165672.png" },
+    { id: "playful", label: "Playful", icon: "https://cdn-icons-png.flaticon.com/512/1067/1067566.png" },
+    { id: "kidFriendly", label: "Kid-friendly", icon: "https://cdn-icons-png.flaticon.com/512/1534/1534400.png" },
   ];
 
   const handleSpeciesToggle = (speciesId) => {
@@ -118,7 +118,7 @@ const FilterSection = ({ onFiltersChange }) => {
               onBlur={(e) => e.target.style.borderColor = "#e0e0e0"}
             />
             <div style={{ position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)", color: "#666" }}>
-              🔍
+              Search
             </div>
           </div>
 
@@ -143,7 +143,7 @@ const FilterSection = ({ onFiltersChange }) => {
                   gap: "5px",
                 }}
               >
-                <span>{species.emoji}</span>
+                <img src={species.icon} alt="" style={{ width: 18, height: 18 }} loading="lazy" />
                 <span>{species.label}</span>
               </button>
             ))}
@@ -170,7 +170,7 @@ const FilterSection = ({ onFiltersChange }) => {
                   gap: "5px",
                 }}
               >
-                <span>{mood.emoji}</span>
+                <img src={mood.icon} alt="" style={{ width: 18, height: 18 }} loading="lazy" />
                 <span>{mood.label}</span>
               </button>
             ))}
@@ -189,7 +189,7 @@ const FilterSection = ({ onFiltersChange }) => {
               transition: "all 0.3s ease",
             }}
           >
-            More Filters ⏷
+            More Filters 
           </button>
         </div>
 
@@ -204,7 +204,7 @@ const FilterSection = ({ onFiltersChange }) => {
                   background: "#4ECDC4", color: "#fff", padding: "4px 8px", borderRadius: "12px", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "4px"
                 }}>
                   {species.emoji} {species.label}
-                  <button onClick={() => handleSpeciesToggle(speciesId)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>×</button>
+                  <button onClick={() => handleSpeciesToggle(speciesId)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>x</button>
                 </span>
               );
             })}
@@ -215,7 +215,7 @@ const FilterSection = ({ onFiltersChange }) => {
                   background: "#FFB6C1", color: "#fff", padding: "4px 8px", borderRadius: "12px", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "4px"
                 }}>
                   {mood.emoji} {mood.label}
-                  <button onClick={() => handleMoodToggle(moodId)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>×</button>
+                  <button onClick={() => handleMoodToggle(moodId)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>x</button>
                 </span>
               );
             })}
@@ -224,7 +224,7 @@ const FilterSection = ({ onFiltersChange }) => {
                 background: "#FFD700", color: "#333", padding: "4px 8px", borderRadius: "12px", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "4px"
               }}>
                 Search: "{activeFilters.search}"
-                <button onClick={() => handleSearchChange({ target: { value: "" } })} style={{ background: "none", border: "none", color: "#333", cursor: "pointer", fontSize: "0.8rem" }}>×</button>
+                <button onClick={() => handleSearchChange({ target: { value: "" } })} style={{ background: "none", border: "none", color: "#333", cursor: "pointer", fontSize: "0.8rem" }}>x</button>
               </span>
             )}
             <button onClick={clearFilters} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", textDecoration: "underline" }}>
@@ -337,7 +337,7 @@ const FilterSection = ({ onFiltersChange }) => {
                 onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
                 onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
               >
-                ✨ Surprise Me!
+                 Surprise Me!
               </button>
             </div>
           </div>

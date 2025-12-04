@@ -90,9 +90,10 @@ export default function Messages() {
 
   const startNewConversation = (selectedUser) => {
     setSelectedChat(selectedUser);
-    setShowNewConversation(false);
-    // Clear any existing messages since this is a new conversation
     setMessages([]);
+    if (selectedUser?.email) {
+      fetchMessages(selectedUser.email);
+    }
   };
 
   const fetchMessages = async (email) => {
@@ -209,7 +210,6 @@ export default function Messages() {
               <h3>{allUsers.length}</h3>
               <p className="bento-sub">Click a card on the right to open a thread.</p>
             </div>
-            <div className="bento-pill">Glass inbox</div>
           </div>
           <div className="bento-tile">
             <p className="bento-label">Today</p>
@@ -244,11 +244,6 @@ export default function Messages() {
                 value={contactQuery}
                 onChange={(e) => setContactQuery(e.target.value)}
               />
-              <div className="chat-toolbar__pills">
-                <span className="pill pill--soft">Glass</span>
-                <span className="pill pill--soft">Secure</span>
-                <span className="pill pill--soft">Real-time</span>
-              </div>
             </div>
             {loadingUsers ? (
               <div className="chat-empty" style={{ padding: '1rem' }}>Loading contacts...</div>

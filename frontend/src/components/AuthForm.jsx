@@ -27,7 +27,7 @@ const AuthForm = ({ onLogin, isSignup: initialIsSignup = false }) => {
     <div className="card shadow-lg border-0 rounded-4 overflow-hidden w-75 mx-auto mt-5">
       <div className="row g-0">
         <div className="col-md-5 bg-teal text-white d-flex flex-column align-items-center justify-content-center p-4">
-          <h2 className="fw-bold">🐾 Fur & Feathers</h2>
+          <h2 className="fw-bold">Fur &amp; Feathers</h2>
           <p className="text-center small mt-2">Adopt. Connect. Love.</p>
         </div>
 

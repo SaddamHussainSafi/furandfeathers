@@ -3,6 +3,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { slugifyPetName } from "../utils/petSlug";
 import SectionHero from "../components/SectionHero";
+import { normalizeMediaUrl } from "../utils/mediaUrl";
 import "../styles/table.css";
 
 const Dashboard = () => {
@@ -56,7 +57,7 @@ const Dashboard = () => {
                   <td>
                     {pet.imageUrl && (
                       <img
-                        src={pet.imageUrl}
+                        src={normalizeMediaUrl(pet.imageUrl)}
                         alt={pet.name}
                         width="70"
                         style={{ cursor: "pointer", borderRadius: 12 }}

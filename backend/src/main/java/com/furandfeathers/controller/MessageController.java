@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/messages")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://ff.saddamhussain.com.np", "http://ff.saddamhussain.com.np"})
 public class MessageController {
 
     @Autowired

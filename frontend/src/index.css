@@ -11,6 +11,13 @@
   box-sizing: border-box;
 }
 
+/* Override reboot list spacing to avoid unintended bottom gaps */
+dl,
+ol,
+ul {
+  margin: 0;
+}
+
 html {
   font-family: 'Kanit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   scroll-behavior: smooth;
@@ -190,6 +197,41 @@ body {
 
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out;
+}
+
+.reveal-block {
+  opacity: 0;
+  transform: translateY(26px) scale(0.985);
+  animation: revealUp 0.8s ease forwards;
+  animation-delay: var(--reveal-delay, 0s);
+  will-change: transform, opacity;
+}
+
+[data-anim="fade-up"] {
+  animation-name: revealUp;
+}
+
+@keyframes revealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(26px) scale(0.985);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-block {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }
 
 /* ==================== CUSTOM SCROLLBAR ==================== */
