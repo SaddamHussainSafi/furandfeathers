@@ -1,5 +1,3 @@
-<div align="center">
-
 # 🐾 Fur & Feathers
 ### Next-Gen Full-Stack Pet Adoption Platform
 
@@ -17,9 +15,7 @@
 <br />
 **AI-Powered Recognition** • **Real-Time Messaging** • **Seamless UX**
 
-[View Demo](#-visual-tour) • [Report Bug](https://github.com/SaddamHussainSafi/furandfeathers/issues) • [Request Feature](https://github.com/SaddamHussainSafi/furandfeathers/issues)
-
-</div>
+[View Demo](#-visual-tour) • [GitHub Repo](https://github.com/SaddamHussainSafi/furandfeathers) • [Report Bug](https://github.com/SaddamHussainSafi/furandfeathers/issues)
 
 ---
 
@@ -27,6 +23,7 @@
 
 *   [🌟 Key Features](#-key-features)
 *   [📸 Visual Tour](#-visual-tour)
+*   [🖼️ Gallery](#-gallery)
 *   [🛠️ Tech Stack](#-tech-stack-deep-dive)
 *   [🏗️ Architecture](#-system-architecture)
 *   [🚀 Setup Guide](#-comprehensive-setup-guide)
@@ -41,16 +38,16 @@
 <table>
   <tr>
     <td width="33%" valign="top">
-      <h3 align="center">🧠 AI Discovery</h3>
-      <p align="center">Upload a photo and let our <strong>Google Gemini-powered AI</strong> find your perfect pet match based on breed and features.</p>
+      <h3>🧠 AI Discovery</h3>
+      <p>Upload a photo and let our <strong>Google Gemini-powered AI</strong> find your perfect pet match based on breed and features.</p>
     </td>
     <td width="33%" valign="top">
-      <h3 align="center">💬 Real-Time Chat</h3>
-      <p align="center">Instant communication between adopters and shelters. Ask questions, schedule visits, and get updates.</p>
+      <h3>💬 Real-Time Chat</h3>
+      <p>Instant communication between adopters and shelters. Ask questions, schedule visits, and get updates.</p>
     </td>
     <td width="33%" valign="top">
-      <h3 align="center">🔐 Secure RBAC</h3>
-      <p align="center">Tailored experiences for <strong>Adopters</strong>, <strong>Shelters</strong>, and <strong>Admins</strong> with robust security.</p>
+      <h3>🔐 Secure RBAC</h3>
+      <p>Tailored experiences for <strong>Adopters</strong>, <strong>Shelters</strong>, and <strong>Admins</strong> with robust security.</p>
     </td>
   </tr>
 </table>
@@ -116,7 +113,7 @@
 <table>
   <tr>
     <td valign="top" width="50%">
-      <h3 align="center">Frontend (Client-Side)</h3>
+      <h3>Frontend (Client-Side)</h3>
       <ul>
         <li><strong>React 18</strong>: Component-based UI architecture.</li>
         <li><strong>Vite</strong>: Lightning-fast build tool.</li>
@@ -127,7 +124,7 @@
       </ul>
     </td>
     <td valign="top" width="50%">
-      <h3 align="center">Backend (Server-Side)</h3>
+      <h3>Backend (Server-Side)</h3>
       <ul>
         <li><strong>Spring Boot 3</strong>: Production-ready Java framework.</li>
         <li><strong>Spring Security</strong>: Robust auth & authorization.</li>
@@ -362,28 +359,20 @@ furandfeathers/
 
 ## 📊 Project Stats
 
-<div align="center">
-
 | 📏 Total Lines of Code | 💻 Languages | 🧩 Components |
 | :---: | :---: | :---: |
 | **~28,000+** | **Java, JS, CSS, HTML, SQL** | **50+ React, 20+ Services** |
 
-</div>
-
 ---
 
 ## 👥 Team Members
-
-<div align="center">
 
 | Name | Role | GitHub |
 | :--- | :--- | :--- |
 | **Saddam Hussain Safi** | Full Stack Developer | [@SaddamHussainSafi](https://github.com/SaddamHussainSafi) |
 | **[Member Name]** | [Role] | [@username](https://github.com/username) |
 | **[Member Name]** | [Role] | [@username](https://github.com/username) |
-| **[Member Name]** | [Role] | [@username](https://github.com/username) |
-
-</div>
+| **[Sandip Khatri]** | [Role] | [@username](https://github.com/username) |
 
 ---
 
@@ -468,6 +457,31 @@ A secure environment tailored to every user type:
 | ![Dashboard](backend/uploads/screenshots/dashboard.png)<br>**Dashboard**<br>Overview of platform metrics. | ![Management](backend/uploads/screenshots/pet-management.png)<br>**Pet Management**<br>Inventory control center. |
 | ![Add 1](backend/uploads/screenshots/petadding-1.png)<br>**Add Pet (Step 1)**<br>Basic information entry. | ![Add 2](backend/uploads/screenshots/pet-adding-2.png)<br>**Add Pet (Step 2)**<br>Detailed attributes. |
 | ![Approvals](backend/uploads/screenshots/pet-approvals.png)<br>**Pet Approvals**<br>Admin review workflow. | ![Users](backend/uploads/screenshots/user-management.png)<br>**User Management**<br>Administer user roles. |
+
+---
+
+## 🖼️ Gallery
+
+<div style="display: flex; overflow-x: auto; gap: 20px; padding-bottom: 20px;">
+  <img src="backend/uploads/screenshots/homepage.png" height="300" alt="Homepage" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/login.png" height="300" alt="Login" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/my-profile.png" height="300" alt="User Profile" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/message-system.png" height="300" alt="Messaging System" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/available-pets.png" height="300" alt="Available Pets" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/featured-pets.png" height="300" alt="Featured Pets" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/pet-details.png" height="300" alt="Pet Details" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/related-pets.png" height="300" alt="Related Pets" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/pet-recommendation.png" height="300" alt="Recommendations" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/playful-content.png" height="300" alt="Playful Content" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/pet-detection.png" height="300" alt="AI Pet Detection" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/ai-chat.png" height="300" alt="AI Chat Assistant" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/dashboard.png" height="300" alt="Dashboard" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/pet-management.png" height="300" alt="Pet Management" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/petadding-1.png" height="300" alt="Add Pet Step 1" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/pet-adding-2.png" height="300" alt="Add Pet Step 2" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/pet-approvals.png" height="300" alt="Pet Approvals" style="border-radius: 10px;">
+  <img src="backend/uploads/screenshots/user-management.png" height="300" alt="User Management" style="border-radius: 10px;">
+</div>
 
 ---
 
