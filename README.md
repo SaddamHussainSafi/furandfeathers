@@ -67,12 +67,39 @@ A secure environment tailored to every user type:
 
 > **Note**: Drop your screenshots into `backend/uploads/screenshots/` with the filenames below to see them here.
 
-| Feature | Description | Preview |
-| :--- | :--- | :--- |
-| **Homepage Hero** | Immersive video background with glassmorphism UI. | ![Home](backend/uploads/screenshots/home-hero.png) |
-| **Pet Gallery** | Grid view with advanced filtering and lazy loading. | ![Gallery](backend/uploads/screenshots/pet-gallery.png) |
-| **AI Detection** | Drag-and-drop interface for image-based search. | ![AI](backend/uploads/screenshots/ai-detection.png) |
-| **Dashboard** | Data visualization for shelter metrics. | ![Dashboard](backend/uploads/screenshots/admin-dashboard.png) |
+### 🏠 Core Experience
+| Feature | Preview |
+| :--- | :--- |
+| **Homepage**<br>Immersive landing with video background. | ![Home](backend/uploads/screenshots/homepage.png) |
+| **Authentication**<br>Secure login with JWT & Google OAuth. | ![Login](backend/uploads/screenshots/login.png) |
+| **User Profile**<br>Manage settings and favorites. | ![Profile](backend/uploads/screenshots/my-profile.png) |
+
+### 🐾 Pet Discovery
+| Feature | Preview |
+| :--- | :--- |
+| **Available Pets**<br>Browse all adoptable friends. | ![Pets](backend/uploads/screenshots/available-pets.png) |
+| **Featured Pets**<br>Highlighted pets looking for homes. | ![Featured](backend/uploads/screenshots/featured-pets.png) |
+| **Pet Details**<br>Comprehensive info and stats. | ![Details](backend/uploads/screenshots/pet-details.png) |
+| **Related Pets**<br>Smart suggestions based on viewing history. | ![Related](backend/uploads/screenshots/related-pets.png) |
+| **Recommendations**<br>Personalized matches. | ![Recs](backend/uploads/screenshots/pet-recommendation.png) |
+
+### 🧠 AI & Interactive Features
+| Feature | Preview |
+| :--- | :--- |
+| **AI Pet Detection**<br>Upload a photo to find lookalikes. | ![AI Detect](backend/uploads/screenshots/pet-detection.png) |
+| **AI Chat Assistant**<br>Get instant answers about pets. | ![AI Chat](backend/uploads/screenshots/ai-chat.png) |
+| **Playful Content**<br>Engaging UI elements. | ![Playful](backend/uploads/screenshots/playful-content.png) |
+
+### 🛡️ Shelter & Admin Management
+| Feature | Preview |
+| :--- | :--- |
+| **Dashboard**<br>Overview of platform metrics. | ![Dashboard](backend/uploads/screenshots/dashboard.png) |
+| **Pet Management**<br>Inventory control center. | ![Management](backend/uploads/screenshots/pet-management.png) |
+| **Add Pet (Step 1)**<br>Basic information entry. | ![Add 1](backend/uploads/screenshots/petadding-1.png) |
+| **Add Pet (Step 2)**<br>Detailed attributes. | ![Add 2](backend/uploads/screenshots/pet-adding-2.png) |
+| **Pet Approvals**<br>Admin review workflow. | ![Approvals](backend/uploads/screenshots/pet-approvals.png) |
+| **User Management**<br>Administer user roles. | ![Users](backend/uploads/screenshots/user-management.png) |
+| **Messaging System**<br>Direct communication. | ![Messages](backend/uploads/screenshots/message-system.png) |
 
 ---
 
@@ -133,6 +160,56 @@ graph TD
     Repo --> DB
     Service -->|Store Images| FS
     Browser -->|Auth Token| GoogleAuth
+```
+
+---
+
+## 🔄 User Journey & Workflow
+
+The platform facilitates a seamless journey from initial signup to finalizing an adoption.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Adopter
+    actor Shelter
+    participant FE as Frontend
+    participant BE as Backend
+    participant AI as Gemini AI
+    participant DB as Database
+
+    box "Onboarding" #e6f7ff
+    User->>FE: Sign Up / Login
+    FE->>BE: Auth Request (JWT/OAuth)
+    BE->>DB: Verify/Create User
+    BE-->>FE: Return JWT Token
+    end
+
+    box "Pet Management" #fff0f6
+    Shelter->>FE: Upload Pet Photo
+    FE->>BE: Send Image
+    BE->>AI: Analyze Image (Breed/Traits)
+    AI-->>BE: Return Analysis
+    BE-->>FE: Auto-fill Pet Details
+    Shelter->>FE: Confirm & Publish
+    FE->>BE: Save Pet Data
+    BE->>DB: Persist Pet Record
+    end
+
+    box "Discovery & Adoption" #f6ffed
+    User->>FE: Browse / Upload Photo Search
+    FE->>BE: Search Query / Image
+    BE->>DB: Query Pets
+    BE-->>FE: Return Matches
+    User->>FE: View Details & Chat
+    FE->>BE: Send Message
+    Shelter->>FE: Receive Message
+    User->>FE: Submit Application
+    FE->>BE: Create Application
+    Shelter->>FE: Review & Approve
+    FE->>BE: Update Status
+    BE->>DB: Mark Adopted
+    end
 ```
 
 ---
