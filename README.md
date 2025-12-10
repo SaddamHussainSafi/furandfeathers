@@ -71,20 +71,19 @@ A secure environment tailored to every user type:
 | | |
 |:---:|:---:|
 | ![Home](backend/uploads/screenshots/homepage.png)<br>**Homepage**<br>Immersive landing with video background. | ![Login](backend/uploads/screenshots/login.png)<br>**Authentication**<br>Secure login with JWT & Google OAuth. |
-| ![Profile](backend/uploads/screenshots/my-profile.png)<br>**User Profile**<br>Manage settings and favorites. | |
+| ![Profile](backend/uploads/screenshots/my-profile.png)<br>**User Profile**<br>Manage settings and favorites. | ![Messages](backend/uploads/screenshots/message-system.png)<br>**Messaging System**<br>Direct communication. |
 
 ### 🐾 Pet Discovery
 | | |
 |:---:|:---:|
 | ![Pets](backend/uploads/screenshots/available-pets.png)<br>**Available Pets**<br>Browse all adoptable friends. | ![Featured](backend/uploads/screenshots/featured-pets.png)<br>**Featured Pets**<br>Highlighted pets looking for homes. |
 | ![Details](backend/uploads/screenshots/pet-details.png)<br>**Pet Details**<br>Comprehensive info and stats. | ![Related](backend/uploads/screenshots/related-pets.png)<br>**Related Pets**<br>Smart suggestions based on viewing history. |
-| ![Recs](backend/uploads/screenshots/pet-recommendation.png)<br>**Recommendations**<br>Personalized matches. | |
+| ![Recs](backend/uploads/screenshots/pet-recommendation.png)<br>**Recommendations**<br>Personalized matches. | ![Playful](backend/uploads/screenshots/playful-content.png)<br>**Playful Content**<br>Engaging UI elements. |
 
-### 🧠 AI & Interactive Features
+### 🧠 AI Features
 | | |
 |:---:|:---:|
 | ![AI Detect](backend/uploads/screenshots/pet-detection.png)<br>**AI Pet Detection**<br>Upload a photo to find lookalikes. | ![AI Chat](backend/uploads/screenshots/ai-chat.png)<br>**AI Chat Assistant**<br>Get instant answers about pets. |
-| ![Playful](backend/uploads/screenshots/playful-content.png)<br>**Playful Content**<br>Engaging UI elements. | |
 
 ### 🛡️ Shelter & Admin Management
 | | |
@@ -92,7 +91,6 @@ A secure environment tailored to every user type:
 | ![Dashboard](backend/uploads/screenshots/dashboard.png)<br>**Dashboard**<br>Overview of platform metrics. | ![Management](backend/uploads/screenshots/pet-management.png)<br>**Pet Management**<br>Inventory control center. |
 | ![Add 1](backend/uploads/screenshots/petadding-1.png)<br>**Add Pet (Step 1)**<br>Basic information entry. | ![Add 2](backend/uploads/screenshots/pet-adding-2.png)<br>**Add Pet (Step 2)**<br>Detailed attributes. |
 | ![Approvals](backend/uploads/screenshots/pet-approvals.png)<br>**Pet Approvals**<br>Admin review workflow. | ![Users](backend/uploads/screenshots/user-management.png)<br>**User Management**<br>Administer user roles. |
-| ![Messages](backend/uploads/screenshots/message-system.png)<br>**Messaging System**<br>Direct communication. | |
 
 ---
 
@@ -171,16 +169,15 @@ sequenceDiagram
     participant AI as Gemini AI
     participant DB as Database
 
-    rect rgb(230, 247, 255)
-    note right of User: Onboarding Phase
+    %% Onboarding Phase
+    Note over User, DB: 🟢 Onboarding Phase
     User->>FE: Sign Up / Login
     FE->>BE: Auth Request (JWT/OAuth)
     BE->>DB: Verify/Create User
     BE-->>FE: Return JWT Token
-    end
 
-    rect rgb(255, 240, 246)
-    note right of Shelter: Pet Management Phase
+    %% Pet Management Phase
+    Note over Shelter, DB: 🟠 Pet Management Phase
     Shelter->>FE: Upload Pet Photo
     FE->>BE: Send Image
     BE->>AI: Analyze Image (Breed/Traits)
@@ -189,10 +186,9 @@ sequenceDiagram
     Shelter->>FE: Confirm & Publish
     FE->>BE: Save Pet Data
     BE->>DB: Persist Pet Record
-    end
 
-    rect rgb(246, 255, 237)
-    note right of User: Discovery & Adoption Phase
+    %% Discovery & Adoption Phase
+    Note over User, DB: 🔵 Discovery & Adoption Phase
     User->>FE: Browse / Upload Photo Search
     FE->>BE: Search Query / Image
     BE->>DB: Query Pets
@@ -205,7 +201,6 @@ sequenceDiagram
     Shelter->>FE: Review & Approve
     FE->>BE: Update Status
     BE->>DB: Mark Adopted
-    end
 ```
 
 ---
