@@ -1,0 +1,271 @@
+# 🐾 Fur & Feathers — Full‑Stack Pet Adoption Platform
+
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
+![React](https://img.shields.io/badge/React-18-blue)
+![Vite](https://img.shields.io/badge/Vite-5.x-purple)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC)
+
+**Fur & Feathers** is a next-generation pet adoption platform that bridges the gap between shelters and adopters through technology. By leveraging **AI-powered pet recognition**, **real-time messaging**, and a **seamless user experience**, we make finding a forever friend easier than ever.
+
+---
+
+## 📖 Table of Contents
+
+*   [🌟 Key Features](#-key-features)
+*   [📸 Visual Tour](#-visual-tour)
+*   [🛠️ Tech Stack Deep Dive](#-tech-stack-deep-dive)
+*   [🏗️ System Architecture](#-system-architecture)
+*   [🚀 Comprehensive Setup Guide](#-comprehensive-setup-guide)
+*   [⚙️ Configuration & Environment](#-configuration--environment)
+*   [🔌 API Reference](#-api-reference)
+*   [📂 Project Structure](#-project-structure)
+*   [🤝 Contributing](#-contributing)
+
+---
+
+## 🌟 Key Features
+
+### 🧠 AI-Powered Discovery
+Upload a photo of a pet you love, and our **Google Gemini-powered AI** will analyze the breed, color, and features to find similar adoptable pets in our database. It's like Shazam for pets!
+
+### 💬 Real-Time Communication
+Built-in chat functionality allows adopters to ask questions directly to shelters without leaving the platform.
+*   **Adopters**: Inquire about pet personality, health, and history.
+*   **Shelters**: Manage inquiries efficiently and schedule visits.
+
+### 🔐 Role-Based Access Control (RBAC)
+A secure environment tailored to every user type:
+<details>
+<summary><strong>🐶 Adopter Experience</strong></summary>
+
+*   **Smart Search**: Filter by breed, age, size, and temperament.
+*   **Favorites & Watchlist**: Save pets to review later.
+*   **Application Tracking**: Real-time status updates on adoption requests.
+</details>
+
+<details>
+<summary><strong>🏠 Shelter Dashboard</strong></summary>
+
+*   **Inventory Management**: CRUD operations for pet listings with rich media support.
+*   **Application Workflow**: Review, approve, or reject applications with one click.
+*   **Analytics**: Visualize profile views and application trends.
+</details>
+
+<details>
+<summary><strong>🛡️ Admin Control Center</strong></summary>
+
+*   **User Oversight**: Manage shelter verifications and user bans.
+*   **Platform Health**: Monitor system-wide statistics and activity logs.
+</details>
+
+---
+
+## 📸 Visual Tour
+
+> **Note**: Drop your screenshots into `backend/uploads/screenshots/` with the filenames below to see them here.
+
+| Feature | Description | Preview |
+| :--- | :--- | :--- |
+| **Homepage Hero** | Immersive video background with glassmorphism UI. | ![Home](backend/uploads/screenshots/home-hero.png) |
+| **Pet Gallery** | Grid view with advanced filtering and lazy loading. | ![Gallery](backend/uploads/screenshots/pet-gallery.png) |
+| **AI Detection** | Drag-and-drop interface for image-based search. | ![AI](backend/uploads/screenshots/ai-detection.png) |
+| **Dashboard** | Data visualization for shelter metrics. | ![Dashboard](backend/uploads/screenshots/admin-dashboard.png) |
+
+---
+
+## 🛠️ Tech Stack Deep Dive
+
+### **Frontend (Client-Side)**
+*   **React 18**: Component-based UI architecture.
+*   **Vite**: Lightning-fast build tool and dev server.
+*   **Tailwind CSS**: Utility-first styling for rapid design implementation.
+*   **Framer Motion & GSAP**: Smooth, complex animations for a polished feel.
+*   **Axios**: Promise-based HTTP client with interceptors for JWT handling.
+*   **Context API**: Global state management for Authentication and Theme.
+
+### **Backend (Server-Side)**
+*   **Spring Boot 3**: Production-ready Java framework.
+*   **Spring Security**: Robust authentication and authorization.
+*   **Spring Data JPA**: Abstraction over Hibernate for database interactions.
+*   **Google Gemini API**: Multimodal AI for image analysis.
+*   **Lombok**: Reduces boilerplate code (Getters, Setters, Builders).
+
+### **Database**
+*   **MySQL 8.0**: Relational database for structured data (Users, Pets, Applications).
+
+---
+
+## 🏗️ System Architecture
+
+The application follows a **Monolithic Architecture** with clear separation of concerns, designed to be easily split into microservices if needed.
+
+```mermaid
+graph TD
+    subgraph Client
+        Browser[React SPA]
+    end
+
+    subgraph Server
+        Controller[REST Controllers]
+        Service[Business Logic Layer]
+        Repo[JPA Repositories]
+        Security[Spring Security Filter Chain]
+    end
+
+    subgraph Infrastructure
+        DB[(MySQL Database)]
+        FS[File System /uploads]
+    end
+
+    subgraph External Services
+        GoogleAuth[Google OAuth2]
+        GeminiAI[Google Gemini API]
+    end
+
+    Browser -->|JSON/HTTPS| Security
+    Security --> Controller
+    Controller --> Service
+    Service --> Repo
+    Service -->|Image Analysis| GeminiAI
+    Repo --> DB
+    Service -->|Store Images| FS
+    Browser -->|Auth Token| GoogleAuth
+```
+
+---
+
+## 🚀 Comprehensive Setup Guide
+
+### Prerequisites
+Ensure you have the following installed:
+*   **Java Development Kit (JDK) 17+**
+*   **Node.js 18+** & **npm**
+*   **MySQL Server 8.0+**
+*   **Git**
+
+### 1. Clone & Prepare
+```bash
+git clone https://github.com/yourusername/furandfeathers.git
+cd furandfeathers
+```
+
+### 2. Database Configuration
+Log in to your MySQL shell and create the database:
+```sql
+CREATE DATABASE testtt;
+-- Ensure your user has privileges
+GRANT ALL PRIVILEGES ON testtt.* TO 'root'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### 3. Backend Configuration
+Navigate to `backend/src/main/resources/application.properties` and configure:
+
+| Property | Description | Example Value |
+| :--- | :--- | :--- |
+| `spring.datasource.username` | DB Username | `root` |
+| `spring.datasource.password` | DB Password | `password123` |
+| `google.client.id` | Google OAuth Client ID | `12345...apps.googleusercontent.com` |
+| `google.api.key` | Gemini AI API Key | `AIzaSy...` |
+| `app.jwt.secret` | JWT Signing Key | `super_secret_key_at_least_32_chars` |
+
+### 4. Launch Backend
+```bash
+cd backend
+# Windows
+.\mvnw.cmd spring-boot:run
+# Mac/Linux
+./mvnw spring-boot:run
+```
+*Server will start on `http://localhost:8080`*
+
+### 5. Frontend Configuration
+Create a `.env` file in the `frontend/` directory:
+```env
+VITE_BACKEND_BASE_URL=http://localhost:8080
+VITE_API_BASE_URL=http://localhost:8080/api
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
+```
+
+### 6. Launch Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*App will open at `http://localhost:5173`*
+
+---
+
+## 🔌 API Reference
+
+Here are the primary endpoints used by the application.
+
+### **Authentication**
+*   `POST /api/auth/register` - Register a new user (Adopter/Shelter).
+*   `POST /api/auth/login` - Authenticate and receive JWT.
+*   `POST /api/auth/google` - Login with Google OAuth.
+
+### **Pets**
+*   `GET /api/pets` - Retrieve paginated list of pets.
+*   `GET /api/pets/{id}` - Get detailed pet profile.
+*   `POST /api/pets` - (Shelter) Create a new pet listing.
+*   `PUT /api/pets/{id}` - (Shelter) Update pet details.
+*   `DELETE /api/pets/{id}` - (Shelter) Remove a listing.
+
+### **Applications**
+*   `POST /api/applications` - Submit an adoption request.
+*   `GET /api/applications/user/{userId}` - Get user's application history.
+*   `PUT /api/applications/{id}/status` - (Shelter) Approve/Reject application.
+
+### **AI Services**
+*   `POST /api/ai/analyze` - Upload image for breed/feature detection.
+
+---
+
+## 📂 Project Structure
+
+A quick look at the top-level directory structure:
+
+```
+furandfeathers/
+├── backend/
+│   ├── src/main/java/com/furandfeathers/
+│   │   ├── config/          # Security & App Config
+│   │   ├── controller/      # REST API Endpoints
+│   │   ├── dto/             # Data Transfer Objects
+│   │   ├── entity/          # JPA Entities (DB Tables)
+│   │   ├── repository/      # DB Access Layer
+│   │   └── service/         # Business Logic
+│   └── uploads/             # Local storage for images
+├── frontend/
+│   ├── src/
+│   │   ├── api/             # Axios setup & endpoints
+│   │   ├── components/      # Reusable UI Components
+│   │   ├── context/         # AuthContext & Global State
+│   │   ├── hooks/           # Custom React Hooks
+│   │   └── pages/           # Full Page Views
+└── README.md
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1.  **Fork** the repository.
+2.  Create a **Feature Branch** (`git checkout -b feature/NewFeature`).
+3.  **Commit** your changes (`git commit -m 'Add some NewFeature'`).
+4.  **Push** to the branch (`git push origin feature/NewFeature`).
+5.  Open a **Pull Request**.
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
