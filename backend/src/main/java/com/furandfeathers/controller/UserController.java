@@ -22,7 +22,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = {"https://ff.saddamhussain.com.np", "http://ff.saddamhussain.com.np"})
+@CrossOrigin(origins = {
+        "http://localhost",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+})
 @RequiredArgsConstructor
 public class UserController {
 

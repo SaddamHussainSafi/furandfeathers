@@ -1,39 +1,66 @@
 package com.furandfeathers.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.core.ParameterizedTypeReference;
 import com.furandfeathers.entity.PetDetection;
 import com.furandfeathers.repository.PetDetectionRepository;
-import java.util.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ai")
 public class PetDetectionController {
 
-    @Value("${google.api.key}")
-    private String googleApiKey;
+    private static final Logger log = LoggerFactory.getLogger(PetDetectionController.class);
+
+    @Value("${gemini.api.key}")
+    private String geminiApiKey;
+
+    @Value("${gemini.api.url:https://generativelanguage.googleapis.com/v1beta}")
+    private String geminiApiUrl;
+
+    @Value("${gemini.model:gemini-2.5-flash-lite}")
+    private String geminiModel;
 
     @Autowired
     private PetDetectionRepository repo;
 
-    private final String GEMINI_API_URL =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
-
     @PostMapping(value = "/pet-detect", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> analyzePet(@RequestParam("image") MultipartFile image)
             throws Exception {
+
+        if (image == null || image.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Collections.singletonMap("error", "Image is required"));
+        }
+
+        if (geminiApiKey == null || geminiApiKey.isBlank()) {
+            log.error("Gemini API key is missing; set gemini.api.key in configuration.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "AI detection is not configured."));
+        }
 
         byte[] bytes = image.getBytes();
         String base64 = Base64.getEncoder().encodeToString(bytes);
 
         // Construct Gemini request body
         Map<String, Object> inlineData = new HashMap<>();
-        inlineData.put("mime_type", image.getContentType());
+        inlineData.put("mime_type", image.getContentType() != null ? image.getContentType() : "image/jpeg");
         inlineData.put("data", base64);
 
         Map<String, Object> userPart = new HashMap<>();
@@ -50,14 +77,38 @@ public class PetDetectionController {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("contents", Collections.singletonList(Collections.singletonMap("parts", parts)));
 
-        // Send to Gemini
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                GEMINI_API_URL + googleApiKey, HttpMethod.POST, entity,
-                new ParameterizedTypeReference<Map<String, Object>>() {});
+        String endpoint = String.format(
+                "%s/models/%s:generateContent?key=%s",
+                geminiApiUrl.replaceAll("/+$", ""),
+                geminiModel,
+                geminiApiKey
+        );
+
+        ResponseEntity<Map<String, Object>> response;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+            response = restTemplate.exchange(
+                    endpoint,
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<Map<String, Object>>() {});
+        } catch (HttpStatusCodeException ex) {
+            String apiMessage = extractApiMessage(ex.getResponseBodyAsString());
+            log.error("Gemini API returned {}: {}", ex.getStatusCode(), apiMessage);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(Collections.singletonMap(
+                            "error",
+                            apiMessage != null && !apiMessage.isBlank()
+                                    ? apiMessage
+                                    : "AI detection service error. Please try again later."));
+        } catch (Exception ex) {
+            log.error("Gemini API call failed", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "AI detection service unavailable."));
+        }
 
         // Parse response text
         String outputText = "";
@@ -80,6 +131,7 @@ public class PetDetectionController {
                 }
             }
         } catch (Exception e) {
+            log.error("Failed parsing Gemini response", e);
             outputText = "Could not parse Gemini response.";
         }
 
@@ -92,6 +144,21 @@ public class PetDetectionController {
         Map<String, Object> result = new HashMap<>();
         result.put("analysis", outputText);
         return ResponseEntity.ok(result);
+    }
+
+    private String extractApiMessage(String responseBody) {
+        if (responseBody == null || responseBody.isBlank()) return null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(responseBody);
+            JsonNode error = root.path("error");
+            if (error.hasNonNull("message")) {
+                return error.get("message").asText();
+            }
+        } catch (Exception ignored) {
+            // If parsing fails, just return raw message.
+        }
+        return responseBody;
     }
 
     @GetMapping("/history")

@@ -57,7 +57,11 @@ const PetDetection = () => {
       setParsedResult(parseAnalysis(res.data.analysis));
     } catch (err) {
       console.error(err);
-      setResult("Error analyzing image.");
+      const message =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "Error analyzing image. Please try again.";
+      setResult(message);
       setParsedResult({});
     } finally {
       setLoading(false);

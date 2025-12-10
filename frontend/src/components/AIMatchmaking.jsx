@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 
 const MATCH_FEATURES = [
   {
@@ -20,7 +21,6 @@ const MATCH_FEATURES = [
 ];
 
 const CAT_SOUND_FILENAMES = [
-  'cat_sound__0.mp3',
   'cat_sound___1.mp3',
   'cat_sound___2.mp3',
   'cat_sound___3.mp3',
@@ -43,7 +43,7 @@ export default function AIMatchmaking() {
 
   useEffect(() => {
     catSoundPool.current = CAT_SOUND_FILENAMES.map(name => {
-      const audio = new Audio(`/uploads/sounds/${name}`);
+      const audio = new Audio(normalizeMediaUrl(`/uploads/sounds/${name}`));
       audio.crossOrigin = 'anonymous';
       audio.preload = 'auto';
       audio.volume = 0.8;

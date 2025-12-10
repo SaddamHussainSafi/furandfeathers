@@ -5,7 +5,13 @@ import DesktopNavbar from './DesktopNavbar';
 import Sidebar from './Sidebar';
 import '../styles/layout.css';
 
-const HEADER_LOGO = '/uploads/logo/Logo.svg';
+const backendBase =
+  (import.meta.env?.VITE_BACKEND_BASE_URL ||
+    import.meta.env?.VITE_API_BASE_URL?.replace(/\/api$/, '') ||
+    '').replace(/\/+$/, '');
+const HEADER_LOGO = backendBase
+  ? `${backendBase}/uploads/logo/Logo.svg`
+  : '/uploads/logo/Logo.svg';
 
 const NAV_SECTIONS = [
   {

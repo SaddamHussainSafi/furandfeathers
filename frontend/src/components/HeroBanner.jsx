@@ -1,8 +1,10 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { normalizeMediaUrl } from "../utils/mediaUrl";
 import "../styles/hero-banner.css";
 
-const HERO_VIDEO = '/uploads/logo/Main_banner_video.mp4';
+const HERO_VIDEO = normalizeMediaUrl("/uploads/logo/Main_banner_video.mp4");
+const HERO_POSTER = "/main-icon.webp";
 
 const HeroBanner = () => {
   const [videoReady, setVideoReady] = useState(false);
@@ -15,7 +17,9 @@ const HeroBanner = () => {
         muted
         loop
         playsInline
+        poster={HERO_POSTER}
         onLoadedData={() => setVideoReady(true)}
+        onError={() => setVideoReady(true)}
       >
         <source src={HERO_VIDEO} type="video/mp4" />
       </video>
@@ -32,7 +36,7 @@ const HeroBanner = () => {
           <p className="hero-banner__description">
             Discover loving pets near you and start a new friendship today.
             <br />
-            Adopt, care, and create lifelong memories — all in one place.
+            Adopt, care, and create lifelong memories - all in one place.
           </p>
           <div className="hero-banner__actions">
             <Link to="/pets" className="site-button site-button--primary hero-banner__cta">
